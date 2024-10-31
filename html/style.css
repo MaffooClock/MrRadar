@@ -1,0 +1,35 @@
+* {
+	margin: 0;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  height: 100vh;
+}
+.radar-container {
+	position: relative;
+	width: 1000px;
+	height: 1000px;
+	background: url(../out/ksjt.png);
+	background-repeat: no-repeat;
+	background-position: top left;
+	background-size: contain;
+}
+
+.radar-container img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: auto;
+	visibility: hidden;
+}
+
+.radar-container img.visible {
+	visibility: visible;
+}

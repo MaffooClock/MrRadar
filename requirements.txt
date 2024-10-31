@@ -1,0 +1,8 @@
+loguru
+numpy < 2.0
+matplotlib
+cartopy
+shapely
+python-awips
+geopy
+pillow

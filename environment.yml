@@ -1,0 +1,16 @@
+name: mr_radar
+channels:
+  - conda-forge
+dependencies:
+  - python=3
+  - loguru
+  - numpy<2.0
+  - matplotlib
+  - cartopy
+  - shapely
+  - python-awips
+  - geopy
+  - pillow
+  - pip
+  - pip:
+    - -r requirements.txt
