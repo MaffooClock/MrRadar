@@ -1,5 +1,9 @@
 # NEXRAD Radar Loop Generator
 
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/e45fa3ef-298b-4c7f-ba58-d82e0837f5b1" alt="Mr. Radar from Spaceballs" />
+</p>
+
 This utility will generate a base map and any number of the most recent NEXRAD radar imagery frames, with the primary
 purpose of displaying an "animated" loop in HTML.
 
