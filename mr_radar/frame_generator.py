@@ -51,7 +51,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
         request = DataAccessLayer.newDataRequest( 'radar' )
         request.setLocationNames( self.SITE_ID )
-        request.setParameters( 37 ) # Composite Ref (Z)
+        request.setParameters( 'Composite Refl' )
 
         available_levels = DataAccessLayer.getAvailableLevels( request )
 
@@ -99,9 +99,10 @@ class FrameGenerator( RadarLoopGenerator ):
 
             self.AXES.pcolormesh( lons, lats, data, cmap=plt.get_cmap( 'rainbow' ), alpha=0.65 )
 
+            # Add the timestamp and product name at the bottom-center
             text_x = ( self.AXES.viewLim.x0 + self.AXES.viewLim.x1 ) / 2.0
             text_y = self.AXES.viewLim.y0 * 1.0025
-            self.AXES.text( text_x, text_y, str( grid.getDataTime().getRefTime() ), transform=ccrs.PlateCarree(), ha='center', size='small' )
+            self.AXES.text( text_x, text_y, "%s - %s" % ( grid.getParameter(), str( grid.getDataTime().getRefTime() ) ), transform=ccrs.PlateCarree(), ha='center', size='small' )
 
             file_path = ( self.FILE_PATH % i )
             super().save_image( file_path )
