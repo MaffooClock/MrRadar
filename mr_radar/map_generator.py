@@ -114,7 +114,7 @@ class MapGenerator( RadarLoopGenerator ):
         topo = np.ma.masked_invalid( grid.getRawData() )
         lons, lats = grid.getLatLonCoords()
 
-        # Add topography
+        # Add topography (with 90% transparency so that it's not so bold)
         self.AXES.contourf( lons, lats, topo, 80, cmap=plt.get_cmap( 'terrain' ), alpha=0.1, extend='both' )
 
         logger.info( '...done' )

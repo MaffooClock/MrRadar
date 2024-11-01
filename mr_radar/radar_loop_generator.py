@@ -2,6 +2,7 @@
 
 import warnings
 import re
+import inspect
 
 from pathlib import Path
 
@@ -70,12 +71,16 @@ class RadarLoopGenerator:
 
 
     def save_image( self, file_path=None ):
-        
+
+        # used for determining which class called this method (MapGenerator or FrameGenerator)
+        prev_frame = inspect.currentframe().f_back
+        calling_class = prev_frame.f_locals['self'].__class__.__name__
+
         if not file_path:
             file_path = self.FILE_PATH
 
-        # Save the image as PNG
-        self.FIGURE.savefig( file_path, transparent=True, bbox_inches='tight', pad_inches=0 )
+        # Save the image as PNG (transparent for radar frames, white for others)
+        self.FIGURE.savefig( file_path, transparent=( calling_class == 'FrameGenerator' ), bbox_inches='tight', pad_inches=0 )
 
         # Use Pillow to squash the PNG file
         with Image.open( file_path ) as image:
