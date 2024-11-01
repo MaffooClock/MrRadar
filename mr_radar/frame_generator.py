@@ -1,7 +1,8 @@
 # coding: utf-8
 
 import numpy as np
-from PIL import Image
+from matplotlib import colors
+from matplotlib.cm import ScalarMappable
 from radar_loop_generator import *
 
 
@@ -74,30 +75,32 @@ class FrameGenerator( RadarLoopGenerator ):
         if not self.FRAMES:
             raise ValueError( 'The quantity of frames to generate has not been set' )
 
-        # dbz_min = 0
-        # dbz_max = 0
+        cmap = plt.get_cmap( 'rainbow' )
+
+        dbz_min = None
+        dbz_max = None
 
         logger.info( 'Processing images...' )
         for i, grid in enumerate( response ):
 
             logger.info( "    #{}...", ( i + 1 ) )
 
-            data = grid.getRawData()
             lons, lats = grid.getLatLonCoords()
+            data = grid.getRawData()
 
             flat = np.ndarray.flatten( data )
             _min = np.nanmin( flat )
             _max = np.nanmax( flat )
 
-            # if _min < dbz_min:
-            #     dbz_min = _min
-            #
-            # if _max > dbz_max:
-            #     dbz_max = _max
+            if dbz_min is None or _min < dbz_min:
+                dbz_min = _min
+
+            if dbz_max is None or _max > dbz_max:
+                dbz_max = _max
 
             self._make_image()
 
-            self.AXES.pcolormesh( lons, lats, data, cmap=plt.get_cmap( 'rainbow' ), alpha=0.65 )
+            self.AXES.pcolormesh( lons, lats, data, cmap=cmap, alpha=0.65 )
 
             # Add the timestamp and product name at the bottom-center
             text_x = ( self.AXES.viewLim.x0 + self.AXES.viewLim.x1 ) / 2.0
@@ -109,11 +112,12 @@ class FrameGenerator( RadarLoopGenerator ):
 
             logger.info( "    {} saved", Path( file_path ).name )
 
+        logger.info( 'Generating dBZ legend...' )
+
+        norm = colors.Normalize( vmin=dbz_min, vmax=dbz_max )
+
+        fig, ax = plt.subplots( figsize=( 16, 0.1 ) )
+        fig.colorbar( ScalarMappable( norm=norm, cmap=cmap ), cax=ax, orientation='horizontal', label='dBZ' )
+        fig.savefig( self.FILE_PATH.replace( '%d', '%s' ) % 'legend', transparent=True, bbox_inches='tight', pad_inches=0 )
+
         logger.info( '...all done!' )
-
-
-    ## TODO: figure out how to generate a color bar from the dbzMin/dbzMax
-
-    #cbar = self.FIGURE.colorbar( cs, extend='both', shrink=0.25, orientation='horizontal' )
-    #cbar.set_label( "%s %s (%s) %s" % ( grid.getParameter(), grid.getLevel(), grid.getUnit(),  str( grid.getDataTime().getRefTime() ) ) )
-
