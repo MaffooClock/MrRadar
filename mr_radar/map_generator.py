@@ -34,6 +34,8 @@ class MapGenerator( RadarLoopGenerator ):
 
         super().save_image()
 
+        logger.info( '...map saved' )
+
 
     def _generate_base( self ):
         logger.info( 'Generating layer 1 of 6: base map...' )
