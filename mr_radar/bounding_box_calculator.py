@@ -3,7 +3,7 @@ from shapely.geometry import Polygon
 
 class BoundingBoxCalculator:
 
-    def __init__( self, center_point: float, radius_miles: float ):
+    def __init__( self, center_point: (float, float), radius_miles: float ):
         self.center_point = center_point
         self.radius_miles = radius_miles
 
