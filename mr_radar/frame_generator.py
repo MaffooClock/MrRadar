@@ -48,7 +48,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
     def _fetch_data( self ):
 
-        logger.info( "Preparing to build NEXRAD images..." )
+        logger.info( 'Preparing to build NEXRAD images...' )
 
         request = DataAccessLayer.newDataRequest( 'radar' )
         request.setLocationNames( self.SITE_ID )
@@ -60,7 +60,7 @@ class FrameGenerator( RadarLoopGenerator ):
             request.setLevels( available_levels[0] )
 
         times = DataAccessLayer.getAvailableTimes( request, True )
-        logger.info( "...done." )
+        logger.info( '...done.' )
 
         # Get the latest images
         logger.info( "Fetching latest {} NEXRAD images...", self.FRAMES )
