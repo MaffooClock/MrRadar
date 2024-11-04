@@ -95,7 +95,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
             self._make_image()
 
-            self.AXES.pcolormesh( lons, lats, data, cmap=cmap, alpha=0.65 )
+            self.AXES.pcolormesh( lons, lats, data, cmap=cmap, alpha=0.75 )
 
             # Add the timestamp and product name at the bottom-center
             text_x = ( self.AXES.viewLim.x0 + self.AXES.viewLim.x1 ) / 2.0
