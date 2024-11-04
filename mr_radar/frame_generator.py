@@ -45,7 +45,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
         logger.info( 'Preparing to build NEXRAD images...' )
 
-        request = DataAccessLayer.newDataRequest( 'radar' )
+        request = DataAccessLayer.newDataRequest( 'radar', envelope=self.BOUNDING_POLYGON )
         request.setLocationNames( self.SITE_ID )
         request.setParameters( 'Composite Refl' )
 
