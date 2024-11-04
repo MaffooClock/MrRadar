@@ -29,7 +29,6 @@ class RadarLoopGenerator:
         self.RADIUS = 0
         self.BOUNDING_BOX = []
         self.BOUNDING_POLYGON = []
-        self.ENVELOPE =  None
 
         self.FILE_PATH = ''
 

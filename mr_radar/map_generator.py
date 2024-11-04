@@ -10,6 +10,7 @@ class MapGenerator( RadarLoopGenerator ):
 
     def __init__( self ):
         self.COUNTY_BOUNDS = []
+        self.ENVELOPE =  None
         super().__init__()
 
 
