@@ -16,11 +16,6 @@ class FrameGenerator( RadarLoopGenerator ):
     def set_file_path( self, path: str='', name: str='' ):
 
         super().set_file_path( path, (f"{name}_%d" if name else 'frame_%d') )
-
-
-        with Path( self.FILE_PATH ) as p:
-            path = p.parent
-            name = p.name
         
         logger.info( "→ Image frames will be saved as '{}'", self.FILE_PATH )
 
