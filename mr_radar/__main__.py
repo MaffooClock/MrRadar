@@ -67,4 +67,4 @@ elif args.command == 'frames':
     generator.set_frames( args.frames )
 
 if generator:
-	generator.generate()
+    generator.generate()
