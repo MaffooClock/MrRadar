@@ -93,8 +93,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
         logger.info( 'Preparing to build NEXRAD images...' )
 
-        request = DataAccessLayer.newDataRequest( 'radar', envelope=self.image_envelope )
-        request.setLocationNames( self.site_id )
+        request = DataAccessLayer.newDataRequest( 'radar', locationNames=[ self.site_id ], envelope=self.image_envelope )
         request.setParameters( 'HZ' )   # Super Res Reflectivity
         # request.setParameters( 'CZ' ) # Composite Ref
         # request.setParameters( 'Reflectivity' )

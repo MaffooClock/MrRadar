@@ -91,12 +91,11 @@ class MapGenerator( RadarLoopGenerator ):
         # We only need the last three characters, upper-case
         identifier = self.site_id[len( self.site_id ) - 3:].upper()
 
-        request = DataAccessLayer.newDataRequest( 'maps', envelope=self.image_envelope )
+        request = DataAccessLayer.newDataRequest( 'maps', locationNames=[identifier], envelope=self.image_envelope )
 
         # Specify the necessary identifiers for requesting the CWA for a given site
         request.addIdentifier( 'table', 'mapdata.county' )
         request.addIdentifier( 'geomField', 'the_geom' )
-        request.setLocationNames( identifier )
 
         # Get response and create list of county geometries
         response = DataAccessLayer.getGeometryData( request, None )
@@ -202,10 +201,9 @@ class MapGenerator( RadarLoopGenerator ):
         logger.info( 'Generating layer 6 of 6: cities...' )
 
         # Define the request for the cities
-        request = DataAccessLayer.newDataRequest( 'maps', envelope=self.image_envelope.buffer( -0.5 ) )
+        request = DataAccessLayer.newDataRequest( 'maps', parameters=[ 'name', 'population', 'prog_disc', 'lat', 'lon' ], envelope=self.image_envelope.buffer( -0.5 ) )
         request.addIdentifier( 'table', 'mapdata.city' )
         request.addIdentifier( 'geomField', 'the_geom' )
-        request.setParameters( 'name', 'population', 'prog_disc', 'lat', 'lon' )
 
         # Get city geometries
         cities = DataAccessLayer.getGeometryData( request, None )
