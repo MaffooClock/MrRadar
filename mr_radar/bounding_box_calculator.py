@@ -1,41 +1,57 @@
+# coding: utf-8
+
+from __future__ import annotations
+
 from geopy.distance import geodesic
-from shapely.geometry import Polygon
+import shapely.geometry as sgeo
+
 
 class BoundingBoxCalculator:
 
-    def __init__( self, center_point: (float, float), radius_miles: float ):
+    def __init__( self, center_point: ( float, float ), radius_miles: int ) -> None:
+        self._radius_miles = None
+
         self.center_point = center_point
         self.radius_miles = radius_miles
 
 
-    def get_bounding_coordinates( self ):
-        """Calculates bounding coordinates using geopy library."""
+    @property
+    def radius_miles( self ) -> int:
+        return self._radius_miles
+
+
+    @radius_miles.setter
+    def radius_miles( self, radius_miles: int | float ) -> None:
+
+        if not ( isinstance( radius_miles, int ) or isinstance( radius_miles, float ) ) or radius_miles <= 0:
+            raise TypeError( 'The radius must be an integer greater than zero' )
+
+        self._radius_miles = radius_miles
+
+
+    def get_bbox( self ) -> [ float, float, float, float ]:
+        """Calculates bounding box coordinates for the given radius and center point"""
 
         latitudes = []
         longitudes = []
 
-        for bearing in [ 0, 180, 90, 270 ]:
+        for bearing in [ 0, 90, 180, 270 ]:
             # Calculate the destination point using the given distance and bearing
             destination = geodesic( miles=self.radius_miles ).destination( self.center_point, bearing )
 
             latitudes.append( destination.latitude )
             longitudes.append( destination.longitude )
 
-        return [ min( longitudes ), max( longitudes ), min( latitudes ), max( latitudes ) ]
-
-
-    def get_bounding_polygon( self ):
-        """Converts bounding box into a Shapely Polygon object."""
-
-        coords = self.get_bounding_coordinates()
-
-        # Create a list of the corners for the bounding box
-        polygon_points = [
-            ( coords[0], coords[2] ),   # Southwest corner (lon, lat)
-            ( coords[0], coords[3] ),   # Northwest corner
-            ( coords[1], coords[3] ),   # Northeast corner
-            ( coords[1], coords[2] ),   # Southeast corner
-            ( coords[0], coords[2] )    # Closing the polygon by returning to the start
+        coords = [
+            min( longitudes ), # West
+            min( latitudes ),  # South
+            max( longitudes ), # East
+            max( latitudes )   # North
         ]
-        
-        return Polygon( polygon_points )
+
+        return coords
+
+
+    def get_polygon( self ) -> sgeo.Polygon:
+        """Converts bounding box to Polygon object"""
+        return sgeo.box( *self.get_bbox() )

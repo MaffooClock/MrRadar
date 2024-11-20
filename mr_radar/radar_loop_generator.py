@@ -1,113 +1,218 @@
 # coding: utf-8
 
+from __future__ import annotations
+
 import warnings
 import re
-import inspect
-
 from pathlib import Path
 
-from PIL import Image
 from loguru import logger
 from awips.dataaccess import DataAccessLayer
-import matplotlib.pyplot as plt
+from matplotlib import pyplot
 import cartopy.crs as ccrs
+import shapely.geometry as sgeo
+
+from rlg_cache import RLGCache
+from cache_keys import RadarCacheKeys
 from bounding_box_calculator import BoundingBoxCalculator
+from rlg_exception import *
 
 # suppress a few warnings that come from plotting
 warnings.filterwarnings( 'ignore', category=RuntimeWarning )
 warnings.filterwarnings( 'ignore', category=UserWarning )
 
+
+EDEX_HOST = 'edex-cloud.unidata.ucar.edu'
+
+
 class RadarLoopGenerator:
 
-    def __init__( self ):
+    def __init__( self, site_id: str, radius: int=None, path: str=None ) -> None:
 
-        DataAccessLayer.changeEDEXHost( 'edex-cloud.unidata.ucar.edu' )
+        DataAccessLayer.changeEDEXHost( EDEX_HOST )
 
-        self.SITE_ID = ''
-        self.SITE_COORDS = ()
+        self._site_id = None
+        self._axes    = None
+        self._figure  = None
 
-        self.RADIUS = 0
-        self.BOUNDING_BOX = []
-        self.BOUNDING_POLYGON = []
+        self.cache = RLGCache()
 
-        self.FILE_PATH = ''
-
-        self.FIGURE = None
-        self.AXES = None
+        self.site_id   = site_id
+        self.radius    = radius
+        self.file_path = path
 
 
-    def set_site_id( self, site_id: str ):
+    @property
+    def site_id( self ) -> str:
+        return self._site_id
+
+
+    @site_id.setter
+    def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
-        self.SITE_ID = site_id.lower()
-        logger.info( f"→ Site ID is '{self.SITE_ID}'" )
+        self._site_id = site_id.lower()
+        self.cache.load( self.site_id )
+        logger.info( "→ Site ID is '{}'", self.site_id )
 
 
-    def set_radius( self, radius: int ):
-
-        if not radius or radius < 1 or radius > 500:
-            raise ValueError( 'The radius must be an integer between 1 and 500 miles' )
-
-        self.RADIUS = radius
-
-        logger.info( f"→ Radius is {self.RADIUS} miles" )
+    @property
+    def radius( self ) -> int:
+        return self.cache.get( RadarCacheKeys.RADIUS, 150 )
 
 
-    def set_file_path( self, path: str='', name: str='' ):
+    @radius.setter
+    def radius( self, radius: int ) -> None:
 
-        if not path:
-            path = Path( Path.cwd(), 'out' )
-       
-        path = Path.resolve( path )
+        if radius is None:
+            return
 
-        Path.mkdir( path, parents=True, exist_ok=True )
-        
-        self.FILE_PATH = str( Path( path, f"%s.png" % name ) )
+        self._validate_radius( radius )
 
+        if self.radius != radius:
+            self.cache.rem( RadarCacheKeys.BBOX )
+            self.cache.rem( RadarCacheKeys.ENVELOPE )
 
-    def generate( self ):
-        self._set_site_coordinates()
-        self._set_bounds()
-
-
-    def save_image( self, file_path=None ):
-
-        # used for determining which class called this method (MapGenerator or FrameGenerator)
-        prev_frame = inspect.currentframe().f_back
-        calling_class = prev_frame.f_locals['self'].__class__.__name__
-
-        if not file_path:
-            file_path = self.FILE_PATH
-
-        # Save the image as PNG (transparent for radar frames, white for others)
-        self.FIGURE.savefig( file_path, transparent=( calling_class == 'FrameGenerator' ), bbox_inches='tight', pad_inches=0 )
-
-        # Use Pillow to squash the PNG file
-        with Image.open( file_path ) as image:
-            image.save( file_path, compress_level=9 )
+        self.cache.set( RadarCacheKeys.RADIUS, radius )
+        logger.info( "→ Radius is {} miles", radius )
 
 
-    def _make_image( self ):
+    @property
+    def site_coords( self ) -> ( float, float ):
+        return self.cache.get( RadarCacheKeys.SITE_COORDS )
 
-        figure, axes = plt.subplots( figsize=( 16, 16 ), subplot_kw=dict( projection=ccrs.PlateCarree() ) )
+
+    @site_coords.setter
+    def site_coords( self, coords: ( float, float ) ) -> None:
+        self.cache.set( RadarCacheKeys.SITE_COORDS, coords )
+        logger.info( "Coordinates for {}: {}", self.site_id, coords )
+
+
+    @property
+    def image_bbox( self ) -> [ float, float, float, float ]:
+        return self.cache.get( RadarCacheKeys.BBOX )
+
+
+    @image_bbox.setter
+    def image_bbox( self, coords: ( float, float ) ) -> None:
+        self.cache.set( RadarCacheKeys.BBOX, coords )
+
+
+    @property
+    def image_envelope( self ) -> sgeo.Polygon | None:
+        envelope = self.cache.get( RadarCacheKeys.ENVELOPE )
+        return sgeo.shape( envelope ) if envelope else None
+
+
+    @image_envelope.setter
+    def image_envelope( self, envelope: sgeo.Polygon ) -> None:
+        self.cache.set( RadarCacheKeys.ENVELOPE, envelope )
+
+
+    @property
+    def crs( self ) -> ccrs.Projection:
+        return ccrs.PlateCarree()
+
+
+    @property
+    def file_name( self ) -> str:
+        return ''
+
+
+    @file_name.setter
+    def file_name( self, name ) -> None:
+        pass
+
+
+    @property
+    def file_path( self ) -> str:
+        default = str( Path( Path.cwd(), 'out' ) )
+        return self.cache.get( RadarCacheKeys.FILE_PATH, default )
+
+
+    @file_path.setter
+    def file_path( self, path: str ) -> None:
+
+        if path is None:
+            return
+
+        path = Path( path ).resolve()
+        self._validate_file_path( path )
+        self.cache.set( RadarCacheKeys.FILE_PATH, str( path ) )
+
+        path.mkdir( parents=True, exist_ok=True )
+
+
+    @property
+    def file_path_name( self ) -> str:
+        return str( Path( self.file_path, self.file_name ) )
+
+
+    @property
+    def axes( self ) -> pyplot.Axes:
+        return self._axes
+
+
+    @axes.setter
+    def axes( self, axes ) -> None:
+        self._axes = axes
+
+
+    @property
+    def figure( self ) -> pyplot.Figure:
+        return self._figure
+
+
+    @figure.setter
+    def figure( self, figure ) -> None:
+        self._figure = figure
+
+
+    def generate( self ) -> None:
+
+        self._check_site_coords()
+        self._check_image_bounds()
+        self.cache.dump()
+
+
+    def save_image( self, **kwargs ) -> None:
+        figure = kwargs.pop( 'figure' ) if 'figure' in kwargs else self.figure
+        file_path_name = kwargs.pop( 'file' ) if 'file' in kwargs else self.file_path_name
+        figure.savefig( file_path_name, bbox_inches='tight', pad_inches=0, **kwargs )
+
+
+    def make_figure( self ) -> None:
+
+        self.figure, self.axes = pyplot.subplots( figsize=( 16, 16 ), subplot_kw=dict( projection=self.crs ) )
 
         # Don't draw borders
-        for spine in axes.spines:
-            axes.spines[spine].set_visible( False )
-
-        axes.set_extent( self.BOUNDING_BOX )
-
-        self.FIGURE = figure
-        self.AXES = axes
+        for spine in self.axes.spines:
+            self.axes.spines[spine].set_visible( False )
 
 
     @classmethod
-    def _validate_site_id( cls, site_id: str ):
+    def _validate_site_id( cls, site_id: str ) -> None:
 
         if not site_id:
-            raise ValueError( 'The site ID is not set' )
+            raise RLGValueError( 'The site ID is not set' )
 
         if re.fullmatch( r'^[KPRT][A-Z]{3}$', site_id, re.IGNORECASE ) is None:
-            raise ValueError( f"The site ID '{site_id}' does not match expected format" )
+            raise RLGValueError( f"The site ID '{site_id}' does not match expected format" )
+
+    @classmethod
+    def _validate_radius( cls, radius: int ) -> None:
+        if not isinstance( radius, int ) or radius < 1 or radius > 500:
+            raise RLGValueError( 'The radius must be an integer between 1 and 500 miles' )
+
+
+    @classmethod
+    def _validate_file_path( cls, path: str | Path ) -> None:
+
+        if not ( isinstance( path, str ) or isinstance( path, Path ) ):
+            raise RLGValueError( 'The file path must be a string representing a relative or absolute filesystem directory' )
+
+        if Path( path ).exists() and not Path( path ).is_dir():
+            raise RLGValueError( 'The file path provided exists, but it is not a directory' )
+
 
     r'''
     ### This method is sooooooo slooooooow, and I'm not sure why ¯\_(ツ)_/¯
@@ -122,40 +227,47 @@ class RadarLoopGenerator:
         locations = DataAccessLayer.getAvailableLocationNames( request )
 
         if site_id not in locations:
-            raise ValueError( f"The site ID '{site_id}' is not a valid radar site" )
+            raise RLGValueError( f"The site ID '{site_id}' is not a valid radar site" )
 
         logger.info( '...done' )
     '''
 
-    def _set_site_coordinates( self ):
 
-        self._validate_site_id( self.SITE_ID )
+    def _check_site_coords( self ) -> None:
 
-        site_id = self.SITE_ID.upper()
+        if self.site_coords:
+            return
+
+        logger.info( "Retrieving coordinates for {}...", self.site_id )
 
         request = DataAccessLayer.newDataRequest( 'obs' )
-        request.setParameters( *(['stationName', 'longitude', 'latitude']) )
-        request.setLocationNames( *([site_id]) )
+        request.setParameters( 'stationName', 'longitude', 'latitude' )
+        request.setLocationNames( self.site_id.upper() )
 
         response = DataAccessLayer.getGeometryData( request, None )
 
         if not response:
-            raise RuntimeError( f"Empty response while requesting coordinates for site {site_id}" )
+            raise RLGRuntimeError( f"Empty response while requesting coordinates for site {self.site_id}" )
 
         data = response[0]
 
-        self.SITE_COORDS = ( data.getNumber( 'latitude' ), data.getNumber( 'longitude' ) )
+        self.site_coords = ( data.getNumber( 'latitude' ), data.getNumber( 'longitude' ) )
 
-        logger.info( f"Coordinates for {site_id}: {self.SITE_COORDS}" )
+        logger.info( '...done' )
 
 
-    def _set_bounds( self ):
+    def _check_image_bounds( self ) -> None:
 
-        if not self.SITE_COORDS:
-            self._set_site_coordinates()
+        if not self.radius:
+            raise RLGRuntimeError( 'Radius not specified' )
 
-        bbox_calc = BoundingBoxCalculator( self.SITE_COORDS, self.RADIUS )
-        self.BOUNDING_BOX = bbox_calc.get_bounding_coordinates()
-        self.BOUNDING_POLYGON = bbox_calc.get_bounding_polygon()
+        if self.image_bbox and self.image_envelope:
+            return
 
-        logger.info( f"Bounds for {self.SITE_ID.upper()} at {self.RADIUS} miles: {self.BOUNDING_BOX}" )
+        logger.info( "Calculating image bounds for {}...", self.site_id )
+
+        bbox_calc = BoundingBoxCalculator( self.site_coords, self.radius )
+        self.image_bbox = bbox_calc.get_bbox()
+        self.image_envelope = sgeo.mapping( bbox_calc.get_polygon() )
+
+        logger.info( f"...done.  Bounds for {self.site_id} at {self.radius} miles: {self.image_bbox}" )

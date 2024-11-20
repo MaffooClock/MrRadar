@@ -1,8 +1,9 @@
 loguru
 numpy < 2.0
 matplotlib
+metpy
 cartopy
 shapely
 python-awips
 geopy
-pillow
+pickledb

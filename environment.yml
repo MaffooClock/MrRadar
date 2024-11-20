@@ -2,15 +2,8 @@ name: mr_radar
 channels:
   - conda-forge
 dependencies:
-  - python=3
-  - loguru
+  - python>=3.9
   - numpy<2.0
-  - matplotlib
-  - cartopy
-  - shapely
-  - python-awips
-  - geopy
-  - pillow
   - pip
   - pip:
     - -r requirements.txt
