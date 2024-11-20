@@ -101,11 +101,17 @@ class FrameGenerator( RadarLoopGenerator ):
         # request.setParameters( 'Composite Refl' )
 
         available_levels = DataAccessLayer.getAvailableLevels( request )
+        logger.info( "→ Available levels: {}", len( available_levels ) )
 
         if available_levels:
-            request.setLevels( available_levels[0] )
+            level = available_levels[0]
+            request.setLevels( level )
+            logger.info( "    ...using {}", level )
 
+        logger.info( '→ Fetching available times...' )
         times = DataAccessLayer.getAvailableTimes( request, True )
+        logger.info( "    ...got {}, but we only need {}", len( times ), self.frames )
+
         logger.info( '...done.' )
 
         # Get the latest images
@@ -157,7 +163,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
         file_name = self.save_image( i, PNG_METADATA )
 
-        logger.info( "    Saved {}", file_name )
+        logger.info( "→ Saved {}", file_name )
 
 
     def _generate_legend( self ) -> None:
