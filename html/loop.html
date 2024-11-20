@@ -2,29 +2,34 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>NEXRAD Radar Loop</title>
-  <link rel="stylesheet" href="style.css">
-  <script type="text/javascript" src="script.js" defer="defer"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NEXRAD Radar Loop</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="preload" as="image" class="preload-map" href="../out/map.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_0.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_1.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_2.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_3.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_4.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_5.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_6.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_7.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_8.png">
+    <link rel="preload" as="image" class="preload-frame" href="../out/frame_9.png">
+
+    <script type="text/javascript" src="script.js" defer="defer"></script>
 </head>
 
 <body>
-  <div class="radar-container">
-    <img src="../out/frame_0.png" class="visible" />
-    <img src="../out/frame_1.png" />
-    <img src="../out/frame_2.png" />
-    <img src="../out/frame_3.png" />
-    <img src="../out/frame_4.png" />
-    <img src="../out/frame_5.png" />
-    <img src="../out/frame_6.png" />
-    <img src="../out/frame_7.png" />
-    <img src="../out/frame_8.png" />
-    <img src="../out/frame_9.png" />
-  </div>
-  <div class="legend-container">
-    <img src="../out/frame_legend.png" />
-  </div>
+    <div class="radar-container">
+        <div class="frames-container"></div>
+        <div class="legend-container">
+            <img alt="Legend: dBZ" src="../out/frame_legend.png"/>
+        </div>
+    </div>
 </body>
 
 </html>

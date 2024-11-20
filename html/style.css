@@ -16,49 +16,21 @@ body {
  	align-items: center;
 }
 
-.radar-container {
-	background: url(../out/map.png) no-repeat center center;
+.frames-container {
+	background: no-repeat center center;
 	background-size: 100%;
 }
 
-.radar-container img, .legend-container img {
+.radar-container img {
 	width: 100%;
 	height: auto;
 	max-width: 1000px;
 }
 
-.radar-container img {
+.frames-container img {
 	display: none;
 }
 
-.radar-container img.visible {
+.frames-container img.visible {
 	display: block;
 }
-
-/*
-.radar-container {
-	position: relative;
-	width: 1000px;
-	height: 858px;
-	background: url(../out/ksjt.png) no-repeat top left;
-	background-size: contain;
-}
-
-.radar-container img {
-	position: absolute;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: auto;
-	visibility: hidden;
-}
-
-.radar-container img.visible {
-	visibility: visible;
-}
-
-.legend {
-	position: relative;
-	width: 1000px;
-}
-*/

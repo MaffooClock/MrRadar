@@ -66,9 +66,13 @@ This will result in 12 new PNG files at `./out/frame_0.png` through `./out/frame
 
 ## Using in HTML
 
-Check out the `html` directory for a basic example of how to "animate" the frames on top of the base map.
+Check out the [`html`](/../../tree/dev/html) directory for a basic example of how to "animate" the frames on top of the base map.  It will work out-of-the-box if you run the utility with the default output file path (`./out`) and names (`map.png` and `frame_<i>.png`).
 
-You'll have to make a few of your own tweaks to make it work out-of-the-box (hint: edit `style.css` to set the name of
-the map image, and `loop.html` to set the name of the image frames).
+If you generate your map file and NEXRAD frames with non-default path and file names, you'll need to tweak the [`loop.html`](/../../tree/dev/html/loop.html) file to make it work.
+
+Simply open `loop.html` in your browser (you can test drive it locally without using a web server).
+
+> [!IMPORTANT]
+> The example HTML files aren't intended to be deployed as-is to your website, they're just an example to show how to create an animated loop effect (but you may certainly copy/paste to your heart's desire).
 
 ## 
