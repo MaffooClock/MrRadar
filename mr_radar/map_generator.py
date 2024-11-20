@@ -88,31 +88,17 @@ class MapGenerator( RadarLoopGenerator ):
     def _generate_borders( self ) -> None:
         logger.info( 'Generating layer 2 of 6: borders...' )
 
-        # We only need the last three characters, upper-case
-        identifier = self.site_id[len( self.site_id ) - 3:].upper()
+        request = DataAccessLayer.newDataRequest( 'maps', envelope=self.image_envelope )
 
-        request = DataAccessLayer.newDataRequest( 'maps', locationNames=[identifier], envelope=self.image_envelope )
-
-        # Specify the necessary identifiers for requesting the CWA for a given site
+        # Required identifiers for requesting counties within the envelope
         request.addIdentifier( 'table', 'mapdata.county' )
         request.addIdentifier( 'geomField', 'the_geom' )
 
         # Get response and create list of county geometries
         response = DataAccessLayer.getGeometryData( request, None )
-        all_counties = []
+        counties = []
         for county in response:
-            all_counties.append( county.getGeometry() )
-
-        # Request counties again, but filter down to CWA counties only
-        request.addIdentifier( 'cwa', identifier )
-        request.addIdentifier( 'inLocation', 'true' )
-        request.addIdentifier( 'locationField', 'cwa' )
-
-        # Get response and create list of CWA geometries
-        response = DataAccessLayer.getGeometryData( request, None )
-        cwa_counties = []
-        for county in response:
-            cwa_counties.append( county.getGeometry() )
+            counties.append( county.getGeometry() )
 
         self.axes.coastlines( resolution=SCALE['medium'] )
 
@@ -126,15 +112,10 @@ class MapGenerator( RadarLoopGenerator ):
         self.axes.add_feature( state_boundaries, linestyle='-', edgecolor='black' )
         logger.info( ' • added state borders' )
 
-        # Plot CWA counties
-        county_boundaries = ShapelyFeature( all_counties, self.crs, facecolor='none', linestyle='-', edgecolor='#CCCCCC' )
+        # Plot county boundaries
+        county_boundaries = ShapelyFeature( counties, self.crs, facecolor='none', linestyle='-', edgecolor='#CCCCCC' )
         self.axes.add_feature( county_boundaries )
-        logger.info( ' • added {} county borders', len( all_counties ) )
-
-        # Plot CWA counties
-        cwa_boundaries = ShapelyFeature( cwa_counties, self.crs, facecolor='none', linestyle='-', edgecolor='#C4887C' )
-        self.axes.add_feature( cwa_boundaries )
-        logger.info( ' • highlighted {} CWA borders', len( cwa_counties ) )
+        logger.info( ' • added {} county borders', len( counties ) )
 
         logger.info( '...done' )
 
