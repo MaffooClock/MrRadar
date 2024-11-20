@@ -100,12 +100,6 @@ class FrameGenerator( RadarLoopGenerator ):
         # request.setParameters( 'Reflectivity' )
         # request.setParameters( 'Composite Refl' )
 
-        ###
-        # available_params = DataAccessLayer.getAvailableParameters( request )
-        # available_params.sort()
-        # print( available_params )
-        # return None
-
         available_levels = DataAccessLayer.getAvailableLevels( request )
 
         if available_levels:
