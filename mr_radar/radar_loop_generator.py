@@ -240,10 +240,7 @@ class RadarLoopGenerator:
 
         logger.info( "Retrieving coordinates for {}...", self.site_id )
 
-        request = DataAccessLayer.newDataRequest( 'obs' )
-        request.setParameters( 'stationName', 'longitude', 'latitude' )
-        request.setLocationNames( self.site_id.upper() )
-
+        request = DataAccessLayer.newDataRequest( 'obs', parameters=[ 'longitude', 'latitude' ], locationNames=[ self.site_id.upper() ] )
         response = DataAccessLayer.getGeometryData( request, None )
 
         if not response:
