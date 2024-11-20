@@ -77,6 +77,7 @@ class FrameGenerator( RadarLoopGenerator ):
             raise RLGRuntimeError( 'No NEXRAD data returned; aborting.' )
 
         self._process_data( response )
+        self._cleanup()
 
 
     def save_image( self, index: int, metadata: dict ) -> str:
@@ -178,3 +179,25 @@ class FrameGenerator( RadarLoopGenerator ):
         fig.colorbar( ScalarMappable( norm=NORM, cmap=CMAP ), cax=ax, orientation='horizontal', label='dBZ' )
         super().save_image( file=legend_file, figure=fig, transparent=True )
 
+
+    def _cleanup( self ) -> None:
+
+        file_name_glob    = self.file_name.replace( '%d', '*' )
+        file_name_pattern = self.file_name.replace( '%d', '[0-9]+' )
+
+        frame_count = 0
+        for frame in Path( self.file_path ).glob( file_name_glob ):
+            if re.match( file_name_pattern, frame.name ):
+                frame_count += 1
+
+        if self.frames >= frame_count:
+            return
+
+        logger.info( "Needed: %d, Have: %d" % ( self.frames, frame_count ) )
+
+        start = self.frames
+        stop = frame_count
+        for i in range( start, stop ):
+            Path( self.file_path_name % i ).unlink()
+
+        logger.info( "→ Deleted {} extra frames", stop - start )
