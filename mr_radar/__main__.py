@@ -97,8 +97,8 @@ except RLGException as e:
 except Exception as e:
     if generator:
         logger.info(
-            "💥 KA-BOOM! "
-            "💥                 \n"
+            "💥 KA-BOOM! 💥"
+            "\n"
             "\tSite:        {site_id}       \n"
             "\tSite Coords: {site_coords}   \n"
             "\tRadius:      {radius}        \n"
