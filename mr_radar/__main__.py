@@ -58,6 +58,13 @@ parser.add_argument(
     help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
 )
 
+parser.add_argument(
+    '-D', '--dump-products',
+    action='store_true',
+    dest='dump_products',
+    help='Dump a list of available NEXRAD radar products to the console without generating any frames'
+)
+
 args = vars( parser.parse_args() )
 command = args.pop('command')
 generator = None
@@ -69,8 +76,14 @@ try:
         generator = MapGenerator( **args )
 
     elif command == 'frames':
+        dump_products = args.pop( 'dump_products' )
+
         from frame_generator import FrameGenerator
         generator = FrameGenerator( **args )
+
+        if dump_products:
+            generator.dump_products()
+            generator = None
 
     if generator:
         generator.generate()

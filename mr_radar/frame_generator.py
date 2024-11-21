@@ -95,6 +95,22 @@ class FrameGenerator( RadarLoopGenerator ):
         self._cleanup()
 
 
+    def dump_products( self ) -> None:
+
+        super().generate()
+
+        products = self._fetch_product_list()
+
+        if not products:
+            logger.warning( "No radar products for {}", self.site_id )
+            return
+
+        logger.info( "The following {} radar products are available for {}:", len( products ), self.site_id )
+        for i, product in enumerate( products ):
+            index = str( i+1 ).rjust( 2 )
+            print( f"\t{index}. {product}" )
+
+
     def save_image( self, index: int, metadata: dict ) -> str:
 
         file_path_name = self.file_path_name % index
