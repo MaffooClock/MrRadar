@@ -72,6 +72,9 @@ generator = None
 try:
 
     if command == 'map':
+        args.pop( 'frames' )
+        args.pop( 'product' )
+
         from map_generator import MapGenerator
         generator = MapGenerator( **args )
 
