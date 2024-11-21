@@ -69,11 +69,11 @@ def main():
             args.pop('frames')
             args.pop('product')
 
-            from map_generator import MapGenerator
+            from .map_generator import MapGenerator
             generator = MapGenerator(**args)
 
         elif command in ['frames', 'dump-products']:
-            from frame_generator import FrameGenerator
+            from .frame_generator import FrameGenerator
             generator = FrameGenerator(**args)
 
             if command == 'dump-products':
@@ -107,6 +107,6 @@ def main():
             )
 
         raise
-    
+
 if __name__ == '__main__':
     main()
