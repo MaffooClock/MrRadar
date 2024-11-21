@@ -8,8 +8,8 @@ from awips.dataaccess import DataAccessLayer
 from matplotlib import pyplot
 from cartopy.feature import ShapelyFeature, NaturalEarthFeature
 
-from cache_keys import RadarCacheKeys
-from radar_loop_generator import RadarLoopGenerator
+from .cache_keys import RadarCacheKeys
+from .radar_loop_generator import RadarLoopGenerator
 
 
 # See https://www.naturalearthdata.com/

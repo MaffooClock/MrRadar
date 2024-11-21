@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "MrRadar"
+version = "0.1.0"
+description = "A Python utility for generating map and NEXRAD imagery files for use in an animated loop"
+authors = [
+    { name = "Matthew Clark", email="matt@mclark.me" }
+]
+dependencies = [
+    "loguru",
+    "numpy < 2.0",
+    "matplotlib",
+    "metpy",
+    "cartopy",
+    "shapely",
+    "python-awips",
+    "geopy",
+    "pickledb"
+]
+
+[tool.setuptools]
+py-modules = ["mr_radar"]
+packages = [
+    "mr_radar",
+]
+
+
+[project.urls]
+homepage = "https://github.com/MaffooClock/MrRadar"
+
+[project.scripts]
+mr_radar = "mr_radar.main:main"
