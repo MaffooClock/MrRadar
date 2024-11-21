@@ -1,0 +1,3 @@
+# let mise set up the venv automagically
+[env]
+_.python.venv = { path = ".venv", create = true }
