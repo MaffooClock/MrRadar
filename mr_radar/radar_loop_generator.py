@@ -126,7 +126,14 @@ class RadarLoopGenerator:
     @property
     def file_path( self ) -> str:
         default = str( Path( Path.cwd(), 'out' ) )
-        return self.cache.get( RadarCacheKeys.FILE_PATH, default )
+        file_path = self.cache.get( RadarCacheKeys.FILE_PATH, default )
+
+        path = Path( file_path ).resolve()
+        self._validate_file_path( path )
+        self.cache.set( RadarCacheKeys.FILE_PATH, str( path ) )
+        path.mkdir( parents=True, exist_ok=True )
+
+        return  file_path
 
 
     @file_path.setter
@@ -135,11 +142,7 @@ class RadarLoopGenerator:
         if path is None:
             return
 
-        path = Path( path ).resolve()
-        self._validate_file_path( path )
-        self.cache.set( RadarCacheKeys.FILE_PATH, str( path ) )
 
-        path.mkdir( parents=True, exist_ok=True )
 
 
     @property
