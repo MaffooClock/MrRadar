@@ -14,8 +14,8 @@ parser = argparse.ArgumentParser(
 
 parser.add_argument(
     'command',
-    choices=[ 'map', 'frames' ],
-    help='The command to specify whether to generate the base map or NEXRAD radar imagery frames'
+    choices=[ 'map', 'frames', 'dump-products' ],
+    help='The command to specify whether to generate the base map or NEXRAD radar imagery frames, or dump a list of available radar products for the given site'
 )
 
 parser.add_argument(
@@ -58,13 +58,6 @@ parser.add_argument(
     help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
 )
 
-parser.add_argument(
-    '-D', '--dump-products',
-    action='store_true',
-    dest='dump_products',
-    help='Dump a list of available NEXRAD radar products to the console without generating any frames'
-)
-
 args = vars( parser.parse_args() )
 command = args.pop('command')
 generator = None
@@ -78,13 +71,11 @@ try:
         from map_generator import MapGenerator
         generator = MapGenerator( **args )
 
-    elif command == 'frames':
-        dump_products = args.pop( 'dump_products' )
-
+    elif command in [ 'frames', 'dump-products' ]:
         from frame_generator import FrameGenerator
         generator = FrameGenerator( **args )
 
-        if dump_products:
+        if command == 'dump-products':
             generator.dump_products()
             generator = None
 

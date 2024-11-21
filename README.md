@@ -68,6 +68,7 @@ python3 mr_radar <command> <site>
 #### Command:
  1. `map`: generate the geographical map that will serve as the background to the NEXRAD imagery frames
  2. `frames`: generate one or more NEXRAD image frames
+ 3. `dump-products`: Dump a list of valid radar products to the console for the given site without generating any imagery
 
 Typically, the `map` command is only ever needed once; the only time you'd want to run it again would be for a different site or radius.  The `frames` command would then be executed at some interval to have the latest quantity of frames available at all times.
 
@@ -81,13 +82,13 @@ This is the four-letter site code (known as the ICAO) of the WSR-88D radar site 
 
 Here are the flags with explanations of each:
 
-| Flag              | Default                                               | Description                                                                                                                                                                              |
-|-------------------|-------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| --radius<br />-r  | 150                                                   | The distance in miles around the radar site that<br />you'd like to cover in the generated images                                                                                        |
-| --path<br />-P    | `./out`                                               | The path where generated PNG files will be saved                                                                                                                                         |
-| --file<br />-f    | Map mode: `map.png`<br />Frames mode: `frame_<i>.png` | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                                                            |
-| --frames<br />-n  | 12                                                    | The quantity of NEXRAD imagery frames<br />(PNG files) to generate                                                                                                                       |
-| --product<br />-p | Reflectivity                                          | The radar product to use for generating<br />NEXRAD imagery frames                                                                                                                       |
+| Flag              | Default                                               | Description                                                                                                                                         |
+|-------------------|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
+| --radius<br />-r  | 150                                                   | The distance in miles around the radar site that<br />you'd like to cover in the generated images                                                   |
+| --path<br />-P    | `./out`                                               | The path where generated PNG files will be saved                                                                                                    |
+| --file<br />-f    | Map mode: `map.png`<br />Frames mode: `frame_<i>.png` | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                       |
+| --frames<br />-n  | 12                                                    | The quantity of NEXRAD imagery frames<br />(PNG files) to generate                                                                                  |
+| --product<br />-p | Reflectivity                                          | The radar product to use for generating NEXRAD<br />imagery frames.<br /><br />Hint: use the `dump-products` command to find<br />the one you want. |
 
 
 ### Example Usage
