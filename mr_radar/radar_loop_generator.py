@@ -125,23 +125,14 @@ class RadarLoopGenerator:
 
     @property
     def file_path( self ) -> str:
-        default = str( Path( Path.cwd(), 'out' ) )
-        file_path = self.cache.get( RadarCacheKeys.FILE_PATH, default )
-
-        path = Path( file_path ).resolve()
-        self._validate_file_path( path )
-        self.cache.set( RadarCacheKeys.FILE_PATH, str( path ) )
-        path.mkdir( parents=True, exist_ok=True )
-
-        return  file_path
+        return str( Path( Path.cwd(), 'out' ) )
 
 
     @file_path.setter
     def file_path( self, path: str ) -> None:
-
         if path is None:
             return
-
+        self.cache.set(RadarCacheKeys.FILE_PATH, str(path))
 
 
 
@@ -178,6 +169,9 @@ class RadarLoopGenerator:
 
 
     def save_image( self, **kwargs ) -> None:
+        output_dir = Path(self.file_path_name).parent
+        output_dir.mkdir(parents=True, exist_ok=True)
+
         figure = kwargs.pop( 'figure' ) if 'figure' in kwargs else self.figure
         file_path_name = kwargs.pop( 'file' ) if 'file' in kwargs else self.file_path_name
         figure.savefig( file_path_name, bbox_inches='tight', pad_inches=0, **kwargs )
