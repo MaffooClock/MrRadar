@@ -149,7 +149,7 @@ class FrameGenerator( RadarLoopGenerator ):
         text_y = self.axes.viewLim.y0 * 1.0025
         date_time = f"%s GMT" % str( grid.getDataTime().getRefTime() )
 
-        values = ( self.site_id.upper(), grid.getParameter(), grid.getLevel() or 'N/A' )
+        values = ( self.site_id, grid.getParameter(), grid.getLevel() or 'N/A' )
         frame_label = ( "%s (%s %s)" % values ).replace( ' N/A', '' )
 
         # Add the timestamp and product name at the bottom-center

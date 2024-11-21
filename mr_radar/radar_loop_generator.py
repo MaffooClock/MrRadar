@@ -50,7 +50,7 @@ class RadarLoopGenerator:
     @site_id.setter
     def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
-        self._site_id = site_id.lower()
+        self._site_id = site_id.upper()
         self.cache.load( self.site_id )
         logger.info( "→ Site ID is '{}'", self.site_id )
 
@@ -240,7 +240,7 @@ class RadarLoopGenerator:
 
         logger.info( "Retrieving coordinates for {}...", self.site_id )
 
-        request = DataAccessLayer.newDataRequest( 'obs', parameters=[ 'longitude', 'latitude' ], locationNames=[ self.site_id.upper() ] )
+        request = DataAccessLayer.newDataRequest( 'obs', parameters=[ 'longitude', 'latitude' ], locationNames=[ self.site_id ] )
         response = DataAccessLayer.getGeometryData( request, None )
 
         if not response:
