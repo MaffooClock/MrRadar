@@ -9,27 +9,50 @@ This utility will generate a base map and any number of the most recent NEXRAD r
 It uses [python-awips](https://github.com/Unidata/python-awips) to pull raw NEXRAD level III radar data from the [EDEX](https://unidata.github.io/awips2/#edex) server maintained by UCAR's [Unidata Program Center](https://www.unidata.ucar.edu/software/awips2/) in Boulder, Colorado.
 
 
-
 ## Installation
 
-If you're using Anaconda, installation into an isolated environment is easy:
+The instructions below assume Linux or macOS.  The same should work in Windows, but the commands will be slightly different.
+
+
+First, grab a copy of the utility:
 ```shell
-conda env create -f environment.yml 
+git clone https://github.com/MaffooClock/MrRadar.git
 ```
 
-...then activate the environment:
-```shell
-conda activate mr_radar
-```
+### Conda
 
-...and finally, run the following for usage information:
-```shell
-python3 mr_radar -h
-```
+[Conda](https://docs.conda.io/en/latest/) make managing Python environments easy.
 
-Map generation is usually only needed once, and all you'll ever do after that is refresh the NEXRAD frames.
+1. Start by creating the environment, which will also install the required dependencies:
+    ```shell
+    cd MrRadar
+    conda env create -f environment.yml 
+    ```
 
-Of course, you'll need to re-generate the map if you change the site or radius (and be sure to use the same values for the image frame generation, in case that wasn't obvious).
+2. Then activate the environment:
+    ```shell
+    conda activate mr_radar
+    ```
+
+### Pip
+
+And for those who prefer using good ol' Pip... of course, doing this in a Python [venv](https://docs.python.org/3/library/venv.html) (virtual environment) is recommended:
+
+1. Create the venv:
+    ```shell
+    cd MrRadar
+    python -m venv .venv
+    ```
+
+2. Activate the venv:
+    ```shell
+    source .venv/bin/activate
+    ```
+
+3. Then install the dependencies
+    ```shell
+    python3 -m pip install -r requirements.txt
+    ```
 
 
 ## Usage
