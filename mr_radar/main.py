@@ -116,9 +116,4 @@ def main():
         raise
 
 if __name__ == '__main__':
-    # Configure loguru logger to default to INFO level
-    log_level = os.getenv('LOG_LEVEL', 'INFO').upper()
-    logger.remove()  # Remove default logger configuration
-    logger.add(sys.stdout, level=log_level)
-
     main()
