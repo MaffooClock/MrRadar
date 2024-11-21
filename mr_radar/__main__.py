@@ -96,7 +96,7 @@ except RLGException as e:
 
 except Exception as e:
     if generator:
-        logger.info(
+        logger.error(
             "💥 KA-BOOM! 💥"
             "\n"
             "\tSite:        {site_id}       \n"
