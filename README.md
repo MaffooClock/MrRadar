@@ -81,12 +81,13 @@ This is the four-letter site code (known as the ICAO) of the WSR-88D radar site 
 
 Here are the flags with explanations of each:
 
-| Flag              | Default                                               | Description                                                                                                   |
-|-------------------|-------------------------------------------------------|---------------------------------------------------------------------------------------------------------------|
-| --radius<br />-r  | 150                                                   | The distance in miles around the radar site that<br />you'd like to cover in the generated images             |
-| --path<br />-p    | `./out`                                               | The path where generated PNG files will be saved                                                              |
-| --file<br />-f    | Map mode: `map.png`<br />Frames mode: `frame_<i>.png` | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension. |
-| --frames<br />-n  | 12                                                    | The quantity of NEXRAD imagery frames<br />(PNG files) to generate                                            |
+| Flag              | Default                                               | Description                                                                                                                                                                              |
+|-------------------|-------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| --radius<br />-r  | 150                                                   | The distance in miles around the radar site that<br />you'd like to cover in the generated images                                                                                        |
+| --path<br />-P    | `./out`                                               | The path where generated PNG files will be saved                                                                                                                                         |
+| --file<br />-f    | Map mode: `map.png`<br />Frames mode: `frame_<i>.png` | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                                                            |
+| --frames<br />-n  | 12                                                    | The quantity of NEXRAD imagery frames<br />(PNG files) to generate                                                                                                                       |
+| --product<br />-p | Reflectivity                                          | The radar product to use for generating<br />NEXRAD imagery frames                                                                                                                       |
 
 
 ### Example Usage

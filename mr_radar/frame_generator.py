@@ -9,7 +9,7 @@ from loguru import logger
 from matplotlib import pyplot
 from matplotlib.cm import ScalarMappable
 from metpy.plots import ctables
-from awips.dataaccess import IGridData, DataAccessLayer
+from awips.dataaccess import IGridData, IDataRequest, DataAccessLayer
 
 from cache_keys import RadarCacheKeys
 from radar_loop_generator import RadarLoopGenerator
@@ -28,8 +28,9 @@ PNG_METADATA = {
 
 class FrameGenerator( RadarLoopGenerator ):
 
-    def __init__( self, site_id: str, radius: int=None, path: str=None, name: str=None, frames: int=None ) -> None:
+    def __init__( self, site_id: str, radius: int=None, path: str=None, name: str=None, product=None, frames: int=None ) -> None:
         super().__init__( site_id, radius, path )
+        self.product = product
         self.frames = frames
         self.file_name = ( name or 'frame' )
         logger.info( "→ Image frames will be saved as '{}'", self.file_path_name )
@@ -43,6 +44,20 @@ class FrameGenerator( RadarLoopGenerator ):
     @file_name.setter
     def file_name( self, name: str ) -> None:
         self.cache.set( RadarCacheKeys.FILE_NAME, f"{name}_%d.png" )
+
+
+    @property
+    def product( self ) -> int:
+        return self.cache.get( RadarCacheKeys.PRODUCT, 'Reflectivity' )
+
+
+    @product.setter
+    def product( self, product: int ) -> None:
+
+        if product is None:
+            return
+
+        self.cache.set( RadarCacheKeys.PRODUCT, product )
 
 
     @property
@@ -89,16 +104,27 @@ class FrameGenerator( RadarLoopGenerator ):
         return Path( file_path_name ).name
 
 
-    def _fetch_data( self ) -> []:
-
-        logger.info( 'Preparing to build NEXRAD images...' )
+    def _prepare_request( self ) -> IDataRequest:
+        logger.info( 'Preparing NEXRAD data request...' )
 
         request = DataAccessLayer.newDataRequest( 'radar', envelope=self.image_envelope )
-        request.addIdentifier( 'icao', self.site_id )
-        request.setParameters( 'HZ' )   # Super Res Reflectivity
-        # request.setParameters( 'CZ' ) # Composite Ref
-        # request.setParameters( 'Reflectivity' )
-        # request.setParameters( 'Composite Refl' )
+        request.addIdentifier( 'icao', self.site_id.lower() )
+
+        return request
+
+
+    def _fetch_product_list( self ) -> [ str ]:
+        request = self._prepare_request()
+        available_parameters = DataAccessLayer.getAvailableParameters( request )
+        return DataAccessLayer.getRadarProductNames( available_parameters )
+
+
+    def _fetch_data( self ) -> [ IGridData ]:
+
+        request = self._prepare_request()
+
+        request.setParameters( self.product )
+        logger.info( "→ Product: {}", self.product )
 
         available_levels = DataAccessLayer.getAvailableLevels( request )
         logger.info( "→ Available levels: {}", len( available_levels ) )
@@ -122,7 +148,7 @@ class FrameGenerator( RadarLoopGenerator ):
         return response
 
 
-    def _process_data( self, response: [] ) -> None:
+    def _process_data( self, response: [ IGridData ] ) -> None:
 
         if not self.frames:
             raise RLGValueError( 'The quantity of frames to generate has not been set' )

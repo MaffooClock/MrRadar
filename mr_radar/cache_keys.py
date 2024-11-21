@@ -41,6 +41,10 @@ class CacheKeys:
             return None
 
     @property
+    def PRODUCT( self ) -> str:
+        return 'product'
+
+    @property
     def FRAMES( self ) -> str:
         return 'frames'
 

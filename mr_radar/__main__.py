@@ -32,7 +32,7 @@ parser.add_argument(
 )
 
 parser.add_argument(
-    '-p', '--path',
+    '-P', '--path',
     type=Path,
     dest='path',
     help='The destination path to the generated images.  Defaults to "./out" in current working directory.'
@@ -49,6 +49,13 @@ parser.add_argument(
     type=int,
     dest='frames',
     help='The number of NEXRAD radar image frames to generate (default: 12)'
+)
+
+parser.add_argument(
+    '-p', '--product',
+    type=str,
+    dest='product',
+    help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
 )
 
 args = vars( parser.parse_args() )
