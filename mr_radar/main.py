@@ -2,6 +2,8 @@
 
 import argparse
 import json
+import os
+import sys
 from pathlib import Path
 from loguru import logger
 
@@ -60,6 +62,11 @@ def main():
     )
 
     args = vars(parser.parse_args())
+    logger.debug("Arguments received:")
+    for arg, value in args.items():
+        logger.debug(f"{arg}: {value}")
+
+
     command = args.pop('command')
     generator = None
 
@@ -109,4 +116,9 @@ def main():
         raise
 
 if __name__ == '__main__':
+    # Configure loguru logger to default to INFO level
+    log_level = os.getenv('LOG_LEVEL', 'INFO').upper()
+    logger.remove()  # Remove default logger configuration
+    logger.add(sys.stdout, level=log_level)
+
     main()
