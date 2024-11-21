@@ -15,7 +15,6 @@ class RLGCache:
     """
 
     def __init__( self ) -> None:
-        self._name = None
         self._pickledb = None
         self._dirty = False
         self._json_file = None
@@ -34,8 +33,7 @@ class RLGCache:
         return path_exists and is_file
 
     def load( self, name ) -> None:
-        self._name = name.lower()
-        self._json_file = f"{name}.json"
+        self._json_file = f"{name.lower()}.json"
         self._pickledb = pickledb.load( self._json_file, False )
 
     def get( self, key, default=None ) -> Any | None:
