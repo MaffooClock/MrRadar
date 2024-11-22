@@ -7,7 +7,8 @@ name = "MrRadar"
 version = "0.1.0"
 description = "A Python utility for generating map and NEXRAD imagery files for use in an animated loop"
 authors = [
-    { name = "Matthew Clark", email="matt@mclark.me" }
+    { name = "Matthew Clark", email="matt@mclark.me" },
+    { name = "David Kowis", email="david@kow.is" }
 ]
 dependencies = [
     "loguru",
