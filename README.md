@@ -25,12 +25,12 @@ The easiest way to run this utility is with Docker, which guarantees that you wo
 
 1. First, build the image:
     ```shell
-    docker build --tag mr_radar .
+    docker build -t mr_radar:latest .
     ```
 
 2. Then run it:
     ```shell
-    docker run -t mr_radar
+    docker run -t --rm mr_radar:latest
     ```
 
 
@@ -133,6 +133,14 @@ Generate 12 of the latest NEXRAD frames for the same location and radius:
 mr_radar frames KSJT
 ```
 This will result in 12 new PNG files at `./out/frame_0.png` through `./out/frame_11.png`.
+
+
+> [!TIP]
+> When running in Docker, you'll need to override the output path with `--path`, and be sure to map the given path to a local path so that you actually get the images!
+> Example:
+> ```shell
+> docker run -t --rm --volume $(pwd)/out:/out mr_radar:latest --path /out <command> <site_id>
+> ```
 
 
 ### Data Caching
