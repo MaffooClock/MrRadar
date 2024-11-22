@@ -1,9 +1,6 @@
 # coding: utf-8
 
 import argparse
-import json
-import os
-import sys
 from pathlib import Path
 from loguru import logger
 
@@ -11,13 +8,14 @@ from loguru import logger
 from .rlg_exception import *
 
 def main():
+
     parser = argparse.ArgumentParser(
         description='Generate a base map or series of NEXRAD radar frames that can be overlayed on the base map'
     )
 
     parser.add_argument(
         'command',
-        choices=['map', 'frames', 'dump-products'],
+        choices=[ 'map', 'frames', 'dump-products' ],
         help='The command to specify whether to generate the base map or NEXRAD radar imagery frames, or dump a list of available radar products for the given site'
     )
 
@@ -61,27 +59,22 @@ def main():
         help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
     )
 
-    args = vars(parser.parse_args())
-    logger.debug("Arguments received:")
-    for arg, value in args.items():
-        logger.debug(f"{arg}: {value}")
-
-
+    args = vars( parser.parse_args() )
     command = args.pop('command')
     generator = None
 
     try:
 
         if command == 'map':
-            args.pop('frames')
-            args.pop('product')
+            args.pop( 'frames' )
+            args.pop( 'product' )
 
             from .map_generator import MapGenerator
-            generator = MapGenerator(**args)
+            generator = MapGenerator( **args )
 
-        elif command in ['frames', 'dump-products']:
+        elif command in [ 'frames', 'dump-products' ]:
             from .frame_generator import FrameGenerator
-            generator = FrameGenerator(**args)
+            generator = FrameGenerator( **args )
 
             if command == 'dump-products':
                 generator.dump_products()
@@ -91,7 +84,7 @@ def main():
             generator.generate()
 
     except RLGException as e:
-        logger.error("Image generation aborted: {}", e)
+        logger.error( "Image generation aborted: {}", e )
 
     except Exception as e:
         if generator:
@@ -105,12 +98,12 @@ def main():
                 "\tEnvelope:    {image_envelope}\n"
                 "\tFile Path:   {file_path_name}\n",
 
-                site_id=generator.site_id,
-                site_coords=generator.site_coords,
-                radius=generator.radius,
-                image_bbox=generator.image_bbox,
-                image_envelope=generator.image_envelope,
-                file_path_name=generator.file_path_name
+                site_id        = generator.site_id,
+                site_coords    = generator.site_coords,
+                radius         = generator.radius,
+                image_bbox     = generator.image_bbox,
+                image_envelope = generator.image_envelope,
+                file_path_name = generator.file_path_name
             )
 
         raise

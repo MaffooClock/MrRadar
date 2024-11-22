@@ -27,9 +27,8 @@ packages = [
     "mr_radar",
 ]
 
-
 [project.urls]
 homepage = "https://github.com/MaffooClock/MrRadar"
 
 [project.scripts]
-mr_radar = "mr_radar.main:main"
+mr_radar = "mr_radar.cli:main"
