@@ -11,9 +11,9 @@ from matplotlib.cm import ScalarMappable
 from metpy.plots import ctables
 from awips.dataaccess import IGridData, IDataRequest, DataAccessLayer
 
-from cache_keys import RadarCacheKeys
-from radar_loop_generator import RadarLoopGenerator
-from rlg_exception import *
+from .cache_keys import RadarCacheKeys
+from .radar_loop_generator import RadarLoopGenerator
+from .rlg_exception import *
 
 
 NORM, CMAP = ctables.registry.get_with_steps( 'NWSStormClearReflectivity', -20, 0.5 )

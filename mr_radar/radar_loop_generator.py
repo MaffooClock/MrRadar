@@ -12,10 +12,10 @@ from matplotlib import pyplot
 import cartopy.crs as ccrs
 import shapely.geometry as sgeo
 
-from rlg_cache import RLGCache
-from cache_keys import RadarCacheKeys
-from bounding_box_calculator import BoundingBoxCalculator
-from rlg_exception import *
+from .rlg_cache import RLGCache
+from .cache_keys import RadarCacheKeys
+from .bounding_box_calculator import BoundingBoxCalculator
+from .rlg_exception import *
 
 # suppress a few warnings that come from plotting
 warnings.filterwarnings( 'ignore', category=RuntimeWarning )
