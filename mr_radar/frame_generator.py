@@ -11,6 +11,7 @@ from matplotlib.cm import ScalarMappable
 from metpy.plots import ctables
 from awips.dataaccess import IGridData, IDataRequest, DataAccessLayer
 
+from .rlg_defaults import RLGDefaults
 from .cache_keys import RadarCacheKeys
 from .radar_loop_generator import RadarLoopGenerator
 from .rlg_exception import *
@@ -32,7 +33,7 @@ class FrameGenerator( RadarLoopGenerator ):
         super().__init__( site_id, radius, path )
         self.product = product
         self.frames = frames
-        self.file_name = ( name or 'frame' )
+        self.file_name = ( name or RLGDefaults.frame_file_name )
 
 
     @property
@@ -47,7 +48,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
     @property
     def product( self ) -> int:
-        return self.cache.get( RadarCacheKeys.PRODUCT, 'Reflectivity' )
+        return self.cache.get( RadarCacheKeys.PRODUCT, RLGDefaults.product )
 
 
     @product.setter
@@ -61,7 +62,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
     @property
     def frames( self ) -> int:
-        return self.cache.get( RadarCacheKeys.FRAMES, 12 )
+        return self.cache.get( RadarCacheKeys.FRAMES, RLGDefaults.frames )
 
 
     @frames.setter
@@ -81,7 +82,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
 
     def generate( self ) -> None:
-        logger.info( "→ Image frames will be saved as '{}'", self.file_path_name )
+        logger.info( "→ Image frames will be saved as '{}'", self.image_file_path_name )
         logger.info( 'Generating NEXRAD image frames...' )
 
         super().generate()
@@ -113,7 +114,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
     def save_image( self, index: int, metadata: dict ) -> str:
 
-        file_path_name = self.file_path_name % index
+        file_path_name = self.image_file_path_name % index
 
         super().save_image( file=file_path_name, transparent=True, metadata=metadata )
 
@@ -210,7 +211,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
     def _generate_legend( self ) -> None:
 
-        legend_file = self.file_path_name.replace( '%d', '%s' ) % 'legend'
+        legend_file = self.image_file_path_name.replace( '%d', '%s' ) % 'legend'
 
         if Path( legend_file ).exists():
             return
@@ -228,7 +229,7 @@ class FrameGenerator( RadarLoopGenerator ):
         file_name_pattern = self.file_name.replace( '%d', '[0-9]+' )
 
         frame_count = 0
-        for frame in Path( self.file_path ).glob( file_name_glob ):
+        for frame in Path( self.image_path ).glob( file_name_glob ):
             if re.match( file_name_pattern, frame.name ):
                 frame_count += 1
 
@@ -240,6 +241,6 @@ class FrameGenerator( RadarLoopGenerator ):
         start = self.frames
         stop = frame_count
         for i in range( start, stop ):
-            Path( self.file_path_name % i ).unlink()
+            Path( self.image_file_path_name % i ).unlink()
 
         logger.info( "→ Deleted {} extra frames", stop - start )

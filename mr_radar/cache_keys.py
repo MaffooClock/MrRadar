@@ -23,8 +23,12 @@ class CacheKeys:
         return 'envelope'
 
     @property
-    def FILE_PATH( self ) -> str:
-        return 'file_path'
+    def OUTPUT_PATH( self ) -> str:
+        return 'output_path'
+
+    @property
+    def IMAGE_PATH( self ) -> str:
+        return 'image_path'
 
     @property
     def FILE_NAME( self ) -> str | None:

@@ -66,3 +66,4 @@ class RLGCache:
             return self._pickledb.dump()
 
         return True
+

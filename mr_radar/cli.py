@@ -96,14 +96,16 @@ def main():
                 "\tRadius:      {radius}        \n"
                 "\tBBox:        {image_bbox}    \n"
                 "\tEnvelope:    {image_envelope}\n"
-                "\tFile Path:   {file_path_name}\n",
+                "\tOut Path:    {output_path}   \n"
+                "\tImage Path:  {image_path}    \n",
 
                 site_id        = generator.site_id,
                 site_coords    = generator.site_coords,
                 radius         = generator.radius,
                 image_bbox     = generator.image_bbox,
                 image_envelope = generator.image_envelope,
-                file_path_name = generator.file_path_name
+                output_path    = generator.output_path,
+                image_path     = generator.image_path
             )
 
         raise

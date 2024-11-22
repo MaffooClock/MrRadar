@@ -12,6 +12,7 @@ from matplotlib import pyplot
 import cartopy.crs as ccrs
 import shapely.geometry as sgeo
 
+from .rlg_defaults import RLGDefaults
 from .rlg_cache import RLGCache
 from .cache_keys import RadarCacheKeys
 from .bounding_box_calculator import BoundingBoxCalculator
@@ -27,7 +28,7 @@ EDEX_HOST = 'edex-cloud.unidata.ucar.edu'
 
 class RadarLoopGenerator:
 
-    def __init__( self, site_id: str, radius: int=None, path: str=None ) -> None:
+    def __init__( self, site_id: str, radius: int=None, out_path: str=None, img_path: str=None ) -> None:
 
         DataAccessLayer.changeEDEXHost( EDEX_HOST )
 
@@ -37,9 +38,10 @@ class RadarLoopGenerator:
 
         self.cache = RLGCache()
 
-        self.site_id   = site_id
-        self.radius    = radius
-        self.file_path = path
+        self.site_id     = site_id
+        self.radius      = radius
+        self.output_path = out_path
+        self.image_path  = img_path
 
 
     @property
@@ -51,13 +53,14 @@ class RadarLoopGenerator:
     def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
         self._site_id = site_id.upper()
-        self.cache.load( self.site_id )
+        json_path = Path( self.output_path, self.site_id )
+        self.cache.load( str( json_path ) )
         logger.info( "→ Site ID is '{}'", self.site_id )
 
 
     @property
     def radius( self ) -> int:
-        return self.cache.get( RadarCacheKeys.RADIUS, 150 )
+        return self.cache.get( RadarCacheKeys.RADIUS, RLGDefaults.radius )
 
 
     @radius.setter
@@ -124,25 +127,44 @@ class RadarLoopGenerator:
 
 
     @property
-    def file_path( self ) -> str:
-        default = str( Path( Path.cwd(), 'out' ) )
-        return self.cache.get( RadarCacheKeys.FILE_PATH, default )
+    def output_path( self ) -> str:
+        return self.cache.get( RadarCacheKeys.OUTPUT_PATH, RLGDefaults.output_path )
 
 
-    @file_path.setter
-    def file_path( self, path: str ) -> None:
+    @output_path.setter
+    def output_path( self, path: str ) -> None:
 
         if path is None:
             return
 
         path = Path( path ).resolve()
         self._validate_file_path( path )
-        self.cache.set( RadarCacheKeys.FILE_PATH, str( path ) )
+        self.cache.set( RadarCacheKeys.OUTPUT_PATH, str( path ) )
 
 
     @property
-    def file_path_name( self ) -> str:
-        return str( Path( self.file_path, self.file_name ) )
+    def image_path( self ) -> str:
+        return self.cache.get( RadarCacheKeys.IMAGE_PATH, self.site_id.lower() )
+
+
+    @image_path.setter
+    def image_path( self, path: str ) -> None:
+
+        if path is None:
+            return
+
+        path = Path( path )
+        self._validate_file_path( path )
+        self.cache.set( RadarCacheKeys.IMAGE_PATH, str( path ) )
+
+
+    @property
+    def image_file_path_name( self ) -> str:
+        image_path = Path( self.image_path )
+        if not image_path.is_absolute():
+            image_path = Path( self.output_path, image_path )
+        image_file_path = Path( image_path, self.file_name )
+        return str( image_file_path )
 
 
     @property
@@ -173,11 +195,11 @@ class RadarLoopGenerator:
 
 
     def save_image( self, **kwargs ) -> None:
-        path = Path( self.file_path )
+        path = Path( self.image_file_path_name ).parent
         path.mkdir( parents=True, exist_ok=True )
 
         figure = kwargs.pop( 'figure' ) if 'figure' in kwargs else self.figure
-        file_path_name = kwargs.pop( 'file' ) if 'file' in kwargs else self.file_path_name
+        file_path_name = kwargs.pop( 'file' ) if 'file' in kwargs else self.image_file_path_name
         figure.savefig( file_path_name, bbox_inches='tight', pad_inches=0, **kwargs )
 
 
