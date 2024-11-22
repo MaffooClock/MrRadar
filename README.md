@@ -30,7 +30,7 @@ The easiest way to run this utility is with Docker, which guarantees that you wo
 
 2. Then run it:
     ```shell
-    docker run mr_radar
+    docker run -t mr_radar
     ```
 
 

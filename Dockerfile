@@ -30,5 +30,8 @@ RUN which mr_radar
 # Test mr_radar command
 RUN mr_radar --help
 
+# Ensure we get the extended 256-color pallet when running with `-t`
+ENV TERM=xterm-256color
+
 ENTRYPOINT [ "mr_radar" ]
 CMD ["--help"]
