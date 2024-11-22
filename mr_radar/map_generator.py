@@ -29,7 +29,6 @@ class MapGenerator( RadarLoopGenerator ):
     def __init__( self, site_id: str, radius: int=None, path: str=None, name: str=None, **kwargs ) -> None:
         super().__init__( site_id, radius, path )
         self.file_name = ( name or 'map' )
-        logger.info( "→ Map file will be saved as '{}'", self.file_path_name )
 
 
     @property
@@ -43,6 +42,7 @@ class MapGenerator( RadarLoopGenerator ):
 
 
     def generate( self ) -> None:
+        logger.info( "→ Map file will be saved as '{}'", self.file_path_name )
         logger.info( 'Generating map...' )
 
         super().generate()

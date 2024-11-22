@@ -33,7 +33,6 @@ class FrameGenerator( RadarLoopGenerator ):
         self.product = product
         self.frames = frames
         self.file_name = ( name or 'frame' )
-        logger.info( "→ Image frames will be saved as '{}'", self.file_path_name )
 
 
     @property
@@ -82,6 +81,7 @@ class FrameGenerator( RadarLoopGenerator ):
 
 
     def generate( self ) -> None:
+        logger.info( "→ Image frames will be saved as '{}'", self.file_path_name )
         logger.info( 'Generating NEXRAD image frames...' )
 
         super().generate()
