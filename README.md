@@ -19,6 +19,21 @@ First, grab a copy of the utility:
 git clone https://github.com/MaffooClock/MrRadar.git
 ```
 
+### Docker
+
+The easiest way to run this utility is with Docker, which guarantees that you won't have any dependency issues.
+
+1. First, build the image:
+    ```shell
+    docker build --tag mr_radar .
+    ```
+
+2. Then run it:
+    ```shell
+    docker run mr_radar
+    ```
+
+
 ### Conda
 
 [Conda](https://docs.conda.io/en/latest/) make managing Python environments easy.
@@ -29,10 +44,16 @@ git clone https://github.com/MaffooClock/MrRadar.git
     conda env create -f environment.yml 
     ```
 
-2. Then activate the environment:
+2. Activate the environment:
     ```shell
     conda activate mr_radar
     ```
+
+3. Then run it:
+    ```shell
+    python3 -m run mr_radar --help
+    ```
+
 
 ### Pip
 
@@ -49,19 +70,27 @@ And for those who prefer using good ol' Pip... of course, doing this in a Python
     source .venv/bin/activate
     ```
 
-3. Then install the dependencies
+3. Install the dependencies
     ```shell
     python3 -m pip install -r requirements.txt
+    ```
+
+4. Then run it:
+    ```shell
+    python3 -m run mr_radar --help
     ```
 
 
 ## Usage
 
+The instructions below show running this utility with just `mr_radar`, but the actual invocation will depend on whether you installed via Docker or Conda/Pip, so adjust accordingly.
+
+
 ### Positional arguments
 
 There are two positional arguments that are required:
 ```shell
-python3 mr_radar <command> <site>
+mr_radar <command> <site>
 ```
 
 
@@ -95,13 +124,13 @@ Here are the flags with explanations of each:
 
 Generate a map with a 150-mile radius centered around KSJT:
 ```shell
-python3 mr_radar map KSJT
+mr_radar map KSJT
 ```
 This will result in a new PNG file at `./out/map.png`. 
 
 Generate 12 of the latest NEXRAD frames for the same location and radius:
 ```shell
-python3 mr_radar frames KSJT
+mr_radar frames KSJT
 ```
 This will result in 12 new PNG files at `./out/frame_0.png` through `./out/frame_11.png`.
 
