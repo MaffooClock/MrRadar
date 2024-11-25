@@ -72,8 +72,8 @@ def main():
         help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
     )
 
-    args = vars( parser.parse_args() )
-    command = args.pop('command')
+    args = vars( parser.parse_args( args=None if sys.argv[2:] else ['--help'] ) )
+    command = args.pop( 'command' )
     generator = None
 
     try:
