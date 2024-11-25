@@ -150,7 +150,11 @@ class RadarLoopGenerator:
 
     @property
     def image_path( self ) -> str:
-        return self.cache.get( RadarCacheKeys.IMAGE_PATH, self.site_id.lower() )
+        image_dir = self.cache.get( RadarCacheKeys.IMAGE_PATH, self.site_id.lower() )
+        image_path =  Path( image_dir )
+        if not image_path.is_absolute():
+            image_path = Path( self.output_path, image_path )
+        return str( image_path )
 
 
     @image_path.setter
@@ -166,10 +170,7 @@ class RadarLoopGenerator:
 
     @property
     def image_file_path_name( self ) -> str:
-        image_path = Path( self.image_path )
-        if not image_path.is_absolute():
-            image_path = Path( self.output_path, image_path )
-        image_file_path = Path( image_path, self.file_name )
+        image_file_path = Path( self.image_path, self.file_name )
         return str( image_file_path )
 
 
@@ -201,7 +202,7 @@ class RadarLoopGenerator:
 
 
     def save_image( self, **kwargs ) -> None:
-        path = Path( self.image_file_path_name ).parent
+        path = Path( self.image_path )
         path.mkdir( parents=True, exist_ok=True )
 
         figure = kwargs.pop( 'figure' ) if 'figure' in kwargs else self.figure
