@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from os import environ
-from pathlib import Path
+
 
 class _RLGDefaults:
 
@@ -12,8 +12,7 @@ class _RLGDefaults:
 
     @property
     def output_path( self ) -> str:
-        cwd_out = str( Path( Path.cwd(), 'out' ) )
-        return '/data' if self.dockerized else cwd_out
+        return '/data' if self.dockerized else './out'
 
     @property
     def map_file_name( self ) -> str:
