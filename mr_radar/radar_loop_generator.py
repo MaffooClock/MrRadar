@@ -32,9 +32,10 @@ class RadarLoopGenerator:
 
         DataAccessLayer.changeEDEXHost( EDEX_HOST )
 
-        self._site_id = None
-        self._axes    = None
-        self._figure  = None
+        self._site_id     = None
+        self._output_path = None
+        self._axes        = None
+        self._figure      = None
 
         self.cache = RLGCache()
 
