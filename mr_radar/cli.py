@@ -62,14 +62,14 @@ def main():
         '-n', '--frames',
         type=int,
         dest='frames',
-        help='The number of NEXRAD radar image frames to generate (default: 12)'
+        help='The number of NEXRAD radar image frames to generate. Default: 12'
     )
 
     parser.add_argument(
         '-p', '--product',
         type=str,
         dest='product',
-        help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
+        help='The radar product to use for generating NEXRAD frames.  Default: Reflectivity'
     )
 
     args = vars( parser.parse_args( args=None if sys.argv[2:] else ['--help'] ) )
