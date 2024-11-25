@@ -198,6 +198,10 @@ class RadarLoopGenerator:
 
         self._check_site_coords()
         self._check_image_bounds()
+
+        path = Path( self.output_path )
+        path.mkdir( parents=True, exist_ok=True )
+
         self.cache.dump()
 
 
