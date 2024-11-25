@@ -15,7 +15,7 @@ def main():
 
     parser.add_argument(
         'command',
-        choices=[ 'map', 'frames', 'dump-products' ],
+        choices=[ 'map', 'frames', 'dump-products', 'dump-vars' ],
         help='The command to specify whether to generate the base map or NEXRAD radar imagery frames, or dump a list of available radar products for the given site'
     )
 
@@ -64,8 +64,13 @@ def main():
     generator = None
 
     try:
+        if command == 'dump-vars':
+            from .radar_loop_generator import RadarLoopGenerator
+            generator = RadarLoopGenerator( **args )
+            generator.dump( 'Dumping variables:', logger.debug )
+            generator = None
 
-        if command == 'map':
+        elif command == 'map':
             args.pop( 'frames' )
             args.pop( 'product' )
 
