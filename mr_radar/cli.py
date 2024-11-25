@@ -86,27 +86,9 @@ def main():
     except RLGException as e:
         logger.error( "Image generation aborted: {}", e )
 
-    except Exception as e:
+    except Exception:
         if generator:
-            logger.error(
-                "💥 KA-BOOM! 💥"
-                "\n"
-                "\tSite:        {site_id}       \n"
-                "\tSite Coords: {site_coords}   \n"
-                "\tRadius:      {radius}        \n"
-                "\tBBox:        {image_bbox}    \n"
-                "\tEnvelope:    {image_envelope}\n"
-                "\tOut Path:    {output_path}   \n"
-                "\tImage Path:  {image_path}    \n",
-
-                site_id        = generator.site_id,
-                site_coords    = generator.site_coords,
-                radius         = generator.radius,
-                image_bbox     = generator.image_bbox,
-                image_envelope = generator.image_envelope,
-                output_path    = generator.output_path,
-                image_path     = generator.image_path
-            )
+            generator.dump( '💥 KA-BOOM! 💥', logger.error )
 
         raise
 

@@ -194,6 +194,32 @@ class RadarLoopGenerator:
         self._figure = figure
 
 
+    def dump( self, message: str, _logger: logger ) -> None:
+
+        self._check_site_coords()
+        self._check_image_bounds()
+
+        _logger( message + "\n"
+            "\tSite:        {site_id}       \n"
+            "\tSite Coords: {site_coords}   \n"
+            "\tRadius:      {radius}        \n"
+            "\tBBox:        {image_bbox}    \n"
+            "\tEnvelope:    {image_envelope}\n"
+            "\tOutput Root: {output_path}   \n"
+            "\tJSON Path:   {json_path}     \n"
+            "\tImage Path:  {image_path}/   \n",
+
+            site_id        = self.site_id,
+            site_coords    = self.site_coords,
+            radius         = self.radius,
+            image_bbox     = self.image_bbox,
+            image_envelope = self.image_envelope,
+            output_path    = self.output_path,
+            json_path      = self.json_path,
+            image_path     = self.image_path
+        )
+
+
     def generate( self ) -> None:
 
         self._check_site_coords()
