@@ -27,8 +27,8 @@ STATE_BORDERS   = 'admin_1_states_provinces_lines'
 
 class MapGenerator( RadarLoopGenerator ):
 
-    def __init__( self, site_id: str, radius: int=None, path: str=None, name: str=None, **kwargs ) -> None:
-        super().__init__( site_id, radius, path )
+    def __init__( self, name: str=None, **kwargs ) -> None:
+        super().__init__( **kwargs )
         self.file_name = ( name or RLGDefaults.map_file_name )
 
 

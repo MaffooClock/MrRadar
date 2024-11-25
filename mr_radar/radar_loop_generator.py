@@ -28,7 +28,7 @@ EDEX_HOST = 'edex-cloud.unidata.ucar.edu'
 
 class RadarLoopGenerator:
 
-    def __init__( self, site_id: str, radius: int=None, out_path: str=None, img_path: str=None ) -> None:
+    def __init__( self, site_id: str, radius: int=None, output_path: str=None, image_dir: str=None, **kwargs ) -> None:
 
         DataAccessLayer.changeEDEXHost( EDEX_HOST )
 
@@ -41,8 +41,8 @@ class RadarLoopGenerator:
 
         self.site_id     = site_id
         self.radius      = radius
-        self.output_path = out_path
-        self.image_path  = img_path
+        self.output_path = output_path
+        self.image_path  = image_dir
 
 
     @property

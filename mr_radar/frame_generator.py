@@ -29,8 +29,8 @@ PNG_METADATA = {
 
 class FrameGenerator( RadarLoopGenerator ):
 
-    def __init__( self, site_id: str, radius: int=None, path: str=None, name: str=None, product=None, frames: int=None ) -> None:
-        super().__init__( site_id, radius, path )
+    def __init__( self, name: str=None, product: str=None, frames: int=None, **kwargs ) -> None:
+        super().__init__( **kwargs )
         self.product = product
         self.frames = frames
         self.file_name = ( name or RLGDefaults.frame_file_name )
