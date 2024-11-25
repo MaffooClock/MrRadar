@@ -127,7 +127,9 @@ class RadarLoopGenerator:
 
     @property
     def output_path( self ) -> str:
-        return self.cache.get( RadarCacheKeys.OUTPUT_PATH, RLGDefaults.output_path )
+        if not self._output_path:
+            self._output_path = RLGDefaults.output_path
+        return self._output_path
 
 
     @output_path.setter
@@ -138,7 +140,7 @@ class RadarLoopGenerator:
 
         path = Path( path ).resolve()
         self._validate_file_path( path )
-        self.cache.set( RadarCacheKeys.OUTPUT_PATH, str( path ) )
+        self._output_path = str( path )
 
 
     @property
