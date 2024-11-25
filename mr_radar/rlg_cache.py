@@ -33,7 +33,9 @@ class RLGCache:
         return path_exists and is_file
 
     def load( self, name ) -> None:
-        self._json_file = f"{name.lower()}.json"
+        if name[-5:].lower() != '.json':
+            name += '.json'
+        self._json_file = name
         self._pickledb = pickledb.load( self._json_file, False )
 
     def get( self, key, default=None ) -> Any | None:

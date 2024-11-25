@@ -53,8 +53,7 @@ class RadarLoopGenerator:
     def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
         self._site_id = site_id.upper()
-        json_path = Path( self.output_path, self.site_id )
-        self.cache.load( str( json_path ) )
+        self.cache.load( str( self.json_path ) )
         logger.info( "→ Site ID is '{}'", self.site_id )
 
 
@@ -140,6 +139,11 @@ class RadarLoopGenerator:
         path = Path( path ).resolve()
         self._validate_file_path( path )
         self.cache.set( RadarCacheKeys.OUTPUT_PATH, str( path ) )
+
+
+    @property
+    def json_path( self ) -> str:
+        return '%s.json' % str( Path( self.output_path, self.site_id.lower() ) )
 
 
     @property
