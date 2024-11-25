@@ -1,11 +1,16 @@
 ## -*- coding: utf-8 -*-
 
-import argparse
+import argparse, sys
 from pathlib import Path
+from os import environ
+
 from loguru import logger
 
-
 from .rlg_exception import *
+
+
+def is_dockerized():
+    return environ.get( 'RLG_DOCKERIZED', False )
 
 def main():
 
@@ -32,11 +37,19 @@ def main():
         help='The distance in miles around the radar site to map'
     )
 
+    output_path_default = '/data' if is_dockerized() else './out'
     parser.add_argument(
-        '-P', '--path',
+        '-D', '--root',
         type=Path,
-        dest='path',
-        help='The destination path to the generated images.  Defaults to "./out" in current working directory.'
+        dest='output_path',
+        help=f'The root path for all output, including JSON cache file and images.  A non-absolute path will be relative to current working directory.  Default: {output_path_default}'
+    )
+
+    parser.add_argument(
+        '-o', '--output',
+        type=Path,
+        dest='image_dir',
+        help=f'The destination path for the generated images.  A non-absolute path will be relative to that specified by "--root".  Default: {output_path_default}/<SITE>'
     )
 
     parser.add_argument(
