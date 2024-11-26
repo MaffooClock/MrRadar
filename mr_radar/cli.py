@@ -1,11 +1,16 @@
 ## -*- coding: utf-8 -*-
 
-import argparse
+import argparse, sys
 from pathlib import Path
+from os import environ
+
 from loguru import logger
 
-
 from .rlg_exception import *
+
+
+def is_dockerized():
+    return environ.get( 'RLG_DOCKERIZED', False )
 
 def main():
 
@@ -15,7 +20,7 @@ def main():
 
     parser.add_argument(
         'command',
-        choices=[ 'map', 'frames', 'dump-products' ],
+        choices=[ 'map', 'frames', 'dump-products', 'dump-vars' ],
         help='The command to specify whether to generate the base map or NEXRAD radar imagery frames, or dump a list of available radar products for the given site'
     )
 
@@ -32,11 +37,19 @@ def main():
         help='The distance in miles around the radar site to map'
     )
 
+    output_path_default = '/data' if is_dockerized() else './out'
     parser.add_argument(
-        '-P', '--path',
+        '-R', '--root',
         type=Path,
-        dest='path',
-        help='The destination path to the generated images.  Defaults to "./out" in current working directory.'
+        dest='output_path',
+        help=f'The root path for all output, including JSON cache file and images.  A non-absolute path will be relative to current working directory.  Default: {output_path_default}'
+    )
+
+    parser.add_argument(
+        '-i', '--images',
+        type=Path,
+        dest='image_dir',
+        help=f'The destination path for the generated images.  A non-absolute path will be relative to that specified by "--root".  Default: {output_path_default}/<SITE>'
     )
 
     parser.add_argument(
@@ -49,23 +62,28 @@ def main():
         '-n', '--frames',
         type=int,
         dest='frames',
-        help='The number of NEXRAD radar image frames to generate (default: 12)'
+        help='The number of NEXRAD radar image frames to generate. Default: 12'
     )
 
     parser.add_argument(
         '-p', '--product',
         type=str,
         dest='product',
-        help='The radar product to use for generating NEXRAD frames (default: Reflectivity)'
+        help='The radar product to use for generating NEXRAD frames.  Default: Reflectivity'
     )
 
-    args = vars( parser.parse_args() )
-    command = args.pop('command')
+    args = vars( parser.parse_args( args=None if sys.argv[2:] else ['--help'] ) )
+    command = args.pop( 'command' )
     generator = None
 
     try:
+        if command == 'dump-vars':
+            from .radar_loop_generator import RadarLoopGenerator
+            generator = RadarLoopGenerator( **args )
+            generator.dump( 'Dumping variables:', logger.debug )
+            generator = None
 
-        if command == 'map':
+        elif command == 'map':
             args.pop( 'frames' )
             args.pop( 'product' )
 
@@ -86,25 +104,9 @@ def main():
     except RLGException as e:
         logger.error( "Image generation aborted: {}", e )
 
-    except Exception as e:
+    except Exception:
         if generator:
-            logger.error(
-                "💥 KA-BOOM! 💥"
-                "\n"
-                "\tSite:        {site_id}       \n"
-                "\tSite Coords: {site_coords}   \n"
-                "\tRadius:      {radius}        \n"
-                "\tBBox:        {image_bbox}    \n"
-                "\tEnvelope:    {image_envelope}\n"
-                "\tFile Path:   {file_path_name}\n",
-
-                site_id        = generator.site_id,
-                site_coords    = generator.site_coords,
-                radius         = generator.radius,
-                image_bbox     = generator.image_bbox,
-                image_envelope = generator.image_envelope,
-                file_path_name = generator.file_path_name
-            )
+            generator.dump( '💥 KA-BOOM! 💥', logger.error )
 
         raise
 

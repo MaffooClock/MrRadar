@@ -28,7 +28,7 @@ The easiest way to run this utility is with Docker, which guarantees that you wo
     docker build -t mr_radar:latest .
     ```
 
-2. Then run it:
+2. Then run it (minimal command to output `--help`):
     ```shell
     docker run -t --rm mr_radar:latest
     ```
@@ -104,20 +104,34 @@ Typically, the `map` command is only ever needed once; the only time you'd want 
 
 #### Site:
 
-This is the four-letter site code (known as the ICAO) of the WSR-88D radar site of which you want to use NEXRAD data.  Consult the [NWS Radar Operations Center](https://www.roc.noaa.gov/branches/program-branch/site-id-database.php) for various methods on finding available radar sites.
+This is the four-letter site code (known as the ICAO) of the radar site from which you want to use NEXRAD data.  Consult the [NWS Radar Operations Center](https://www.roc.noaa.gov/branches/program-branch/site-id-database.php) for various methods on finding available radar sites.
 
 
 ### Optional Arguments
 
 Here are the flags with explanations of each:
 
-| Flag              | Default                                               | Description                                                                                                                                         |
-|-------------------|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------|
-| --radius<br />-r  | 150                                                   | The distance in miles around the radar site that<br />you'd like to cover in the generated images                                                   |
-| --path<br />-P    | `./out`                                               | The path where generated PNG files will be saved                                                                                                    |
-| --file<br />-f    | Map mode: `map.png`<br />Frames mode: `frame_<i>.png` | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                       |
-| --frames<br />-n  | 12                                                    | The quantity of NEXRAD imagery frames<br />(PNG files) to generate                                                                                  |
-| --product<br />-p | Reflectivity                                          | The radar product to use for generating NEXRAD<br />imagery frames.<br /><br />Hint: use the `dump-products` command to find<br />the one you want. |
+<!--
+    We'll need to use these to prevent the table from word-wrapping in the first two columns:
+        Non-breaking hyphen: &#8209;
+        Non-breaking space:  &#160; or &nbsp;
+-->
+
+| Flag                                | Default                                                                         | Description                                                                                                                                                                             |
+|-------------------------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| &#8209;&#8209;radius<br />&#8209;r  | 150                                                                             | The distance in miles around the radar site that you'd like to feature in the generated images                                                                                          |
+| &#8209;&#8209;root<br />&#8209;R    | Dockerized:&nbsp;`/data`<br />Direct:&nbsp;`./out` in current working directory | The root path for all output (JSON cache file and generated images)                                                                                                                     |
+| &#8209;&#8209;images<br />&#8209;i  | `./<site_id>` relative to root path                                             | The directory in which the generated PNG files will be saved, which will be relative to the root path.<br /><br />Specify an absolute path to save the images outside of the root path. |
+| &#8209;&#8209;file<br />&#8209;f    | Map&nbsp;mode:&nbsp;`map.png`<br />Frames&nbsp;mode:&nbsp;`frame_<i>.png`       | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                                                           |
+| &#8209;&#8209;frames<br />&#8209;n  | 12                                                                              | The quantity of NEXRAD imagery frames to generate                                                                                                                                       |
+| &#8209;&#8209;product<br />&#8209;p | Reflectivity                                                                    | The radar product to use for generating NEXRAD imagery frames.<br /><br />Hint: use the `dump-products` command to find the one you want.                                               |
+
+
+> [!TIP]
+> When running in Docker, don't forget to map the `/data` directory within the container to a local path, or you won't get any of the generated images:
+> ```shell
+> docker run -t --rm --volume $(pwd)/out:/data mr_radar:latest <command> <site_id>
+> ```
 
 
 ### Example Usage
@@ -126,41 +140,38 @@ Generate a map with a 150-mile radius centered around KSJT:
 ```shell
 mr_radar map KSJT
 ```
-This will result in a new PNG file at `./out/map.png`. 
+This will result in a new PNG file at `./out/ksjt/map.png`. 
 
 Generate 12 of the latest NEXRAD frames for the same location and radius:
 ```shell
 mr_radar frames KSJT
 ```
-This will result in 12 new PNG files at `./out/frame_0.png` through `./out/frame_11.png`.
-
-
-> [!TIP]
-> When running in Docker, you'll need to override the output path with `--path`, and be sure to map the given path to a local path so that you actually get the images!
-> Example:
-> ```shell
-> docker run -t --rm --volume $(pwd)/out:/out mr_radar:latest --path /out <command> <site_id>
-> ```
+This will result in 12 new PNG files at `./out/ksjt/frame_0.png` through `./out/ksjt/frame_11.png`.
 
 
 ### Data Caching
 
-You will also find a new JSON file (`ksjt.json`, in this example) in your current working directory, which contains the command-line arguments you supplied, as well as additional derived information based on the site ID and radius.
+You will also find a new JSON file (`./out/ksjt.json`, in this example) in the root output path, which contains the command-line arguments you supplied, as well as additional derived information based on the site ID and radius.
 
 Here's what it's good for:
-1. This information makes subsequent runs faster and more efficient by re-using that information rather than having to make repeated requests for information that would never change (such as radar site coordinates, for instance).
-2. You will no longer need any of the optional command-line arguments on subsequent runs; those values will be read from this file if they are not present on the command line.  Simply run `python3 mr_radar frames <site_id>` to re-use the radius and frame count that you specified initially.
+1. This makes subsequent runs faster and more efficient by re-using information rather than having to make repeated requests for information that would never change (such as radar site coordinates, for instance).
+2. You will no longer need any of the optional command-line arguments on subsequent runs; those values will be read from this file if they are not present on the command line.
 
-Deleting this file won't hurt anything, but it's not necessary to do so with normal use.
+Deleting this file won't hurt anything, but it's not a necessary task in the course of normal use.
 
 
 ## Using in HTML
 
-Check out the [`html`](/../../tree/dev/html) directory for a basic example of how to "animate" the frames on top of the base map.  It will work out-of-the-box if you run the utility with the default output file path (`./out`) and names (`map.png` and `frame_<i>.png`).
+Check out the [`html`](./html) directory for a basic example of how to "animate" the frames on top of the base map.
 
-If you generate your map file and NEXRAD frames with non-default path and file names, you'll need to tweak the [`loop.html`](/../../tree/dev/html/loop.html) file to make it work.
+The example HTML will work out-of-the-box if you run the utility with:
+1. default root file path (`./out`)
+2. default file names (`map.png` and `frame_<i>.png`).
+3. specify `--images .` to save generated images in the root path
 
-Simply open `loop.html` in your browser (you can test drive it locally without using a web server).
+Otherwise, you'll need to tweak the [`loop.html`](./html/loop.html) file to make it work.
+
+To view the animated loop after generating the map and NEXRAD frames, simply open the `loop.html` file in your browser (no web server needed to test-drive locally).
 
 > [!IMPORTANT]
 > The example HTML files aren't intended to be deployed as-is to your website, they're just an example to show how to create an animated loop effect (but you may certainly copy/paste to your heart's desire).

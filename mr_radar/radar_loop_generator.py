@@ -12,6 +12,7 @@ from matplotlib import pyplot
 import cartopy.crs as ccrs
 import shapely.geometry as sgeo
 
+from .rlg_defaults import RLGDefaults
 from .rlg_cache import RLGCache
 from .cache_keys import RadarCacheKeys
 from .bounding_box_calculator import BoundingBoxCalculator
@@ -27,19 +28,21 @@ EDEX_HOST = 'edex-cloud.unidata.ucar.edu'
 
 class RadarLoopGenerator:
 
-    def __init__( self, site_id: str, radius: int=None, path: str=None ) -> None:
+    def __init__( self, site_id: str, radius: int=None, output_path: str=None, image_dir: str=None, **kwargs ) -> None:
 
         DataAccessLayer.changeEDEXHost( EDEX_HOST )
 
-        self._site_id = None
-        self._axes    = None
-        self._figure  = None
+        self._site_id     = None
+        self._output_path = None
+        self._axes        = None
+        self._figure      = None
 
         self.cache = RLGCache()
 
-        self.site_id   = site_id
-        self.radius    = radius
-        self.file_path = path
+        self.site_id     = site_id
+        self.radius      = radius
+        self.output_path = output_path
+        self.image_path  = image_dir
 
 
     @property
@@ -51,13 +54,13 @@ class RadarLoopGenerator:
     def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
         self._site_id = site_id.upper()
-        self.cache.load( self.site_id )
+        self.cache.load( str( self.json_path ) )
         logger.info( "→ Site ID is '{}'", self.site_id )
 
 
     @property
     def radius( self ) -> int:
-        return self.cache.get( RadarCacheKeys.RADIUS, 150 )
+        return self.cache.get( RadarCacheKeys.RADIUS, RLGDefaults.radius )
 
 
     @radius.setter
@@ -124,25 +127,52 @@ class RadarLoopGenerator:
 
 
     @property
-    def file_path( self ) -> str:
-        default = str( Path( Path.cwd(), 'out' ) )
-        return self.cache.get( RadarCacheKeys.FILE_PATH, default )
+    def output_path( self ) -> str:
+        if not self._output_path:
+            self._output_path = RLGDefaults.output_path
+        return self._output_path
 
 
-    @file_path.setter
-    def file_path( self, path: str ) -> None:
+    @output_path.setter
+    def output_path( self, path: str ) -> None:
 
         if path is None:
             return
 
         path = Path( path ).resolve()
         self._validate_file_path( path )
-        self.cache.set( RadarCacheKeys.FILE_PATH, str( path ) )
+        self._output_path = str( path )
 
 
     @property
-    def file_path_name( self ) -> str:
-        return str( Path( self.file_path, self.file_name ) )
+    def json_path( self ) -> str:
+        return '%s.json' % str( Path( self.output_path, self.site_id.lower() ) )
+
+
+    @property
+    def image_path( self ) -> str:
+        image_dir = self.cache.get( RadarCacheKeys.IMAGE_PATH, self.site_id.lower() )
+        image_path =  Path( image_dir )
+        if not image_path.is_absolute():
+            image_path = Path( self.output_path, image_path )
+        return str( image_path )
+
+
+    @image_path.setter
+    def image_path( self, path: str ) -> None:
+
+        if path is None:
+            return
+
+        path = Path( path )
+        self._validate_file_path( path )
+        self.cache.set( RadarCacheKeys.IMAGE_PATH, str( path ) )
+
+
+    @property
+    def image_file_path_name( self ) -> str:
+        image_file_path = Path( self.image_path, self.file_name )
+        return str( image_file_path )
 
 
     @property
@@ -165,19 +195,49 @@ class RadarLoopGenerator:
         self._figure = figure
 
 
+    def dump( self, message: str, _logger: logger ) -> None:
+
+        self._check_site_coords()
+        self._check_image_bounds()
+
+        _logger( message + "\n"
+            "\tSite:        {site_id}       \n"
+            "\tSite Coords: {site_coords}   \n"
+            "\tRadius:      {radius}        \n"
+            "\tBBox:        {image_bbox}    \n"
+            "\tEnvelope:    {image_envelope}\n"
+            "\tOutput Root: {output_path}   \n"
+            "\tJSON Path:   {json_path}     \n"
+            "\tImage Path:  {image_path}/   \n",
+
+            site_id        = self.site_id,
+            site_coords    = self.site_coords,
+            radius         = self.radius,
+            image_bbox     = self.image_bbox,
+            image_envelope = self.image_envelope,
+            output_path    = self.output_path,
+            json_path      = self.json_path,
+            image_path     = self.image_path
+        )
+
+
     def generate( self ) -> None:
 
         self._check_site_coords()
         self._check_image_bounds()
+
+        path = Path( self.output_path )
+        path.mkdir( parents=True, exist_ok=True )
+
         self.cache.dump()
 
 
     def save_image( self, **kwargs ) -> None:
-        path = Path( self.file_path )
+        path = Path( self.image_path )
         path.mkdir( parents=True, exist_ok=True )
 
         figure = kwargs.pop( 'figure' ) if 'figure' in kwargs else self.figure
-        file_path_name = kwargs.pop( 'file' ) if 'file' in kwargs else self.file_path_name
+        file_path_name = kwargs.pop( 'file' ) if 'file' in kwargs else self.image_file_path_name
         figure.savefig( file_path_name, bbox_inches='tight', pad_inches=0, **kwargs )
 
 

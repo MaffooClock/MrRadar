@@ -19,7 +19,7 @@ class RLGCache:
         self._dirty = False
         self._json_file = None
 
-    def __contains__( self, key ) -> bool:
+    def __contains__( self, key: str ) -> bool:
         return self._pickledb.exists( key )
 
     @property
@@ -32,11 +32,13 @@ class RLGCache:
         is_file = Path( self._json_file ).is_file()
         return path_exists and is_file
 
-    def load( self, name ) -> None:
-        self._json_file = f"{name.lower()}.json"
+    def load( self, name: str ) -> None:
+        if name[-5:].lower() != '.json':
+            name += '.json'
+        self._json_file = name
         self._pickledb = pickledb.load( self._json_file, False )
 
-    def get( self, key, default=None ) -> Any | None:
+    def get( self, key: str, default=None ) -> Any | None:
         if not self._pickledb.exists( key ):
             self._pickledb.set( key, default )
         return self._pickledb.get( key )
@@ -52,11 +54,11 @@ class RLGCache:
 
         return False
 
-    def rem( self, key ) -> bool:
+    def rem( self, key: str ) -> bool:
         self._dirty = True
         return self._pickledb.rem( key )
 
-    def dump( self, force=False ) -> bool:
+    def dump( self, force: bool=False ) -> bool:
 
         if not self._json_file:
             return False
@@ -66,3 +68,4 @@ class RLGCache:
             return self._pickledb.dump()
 
         return True
+

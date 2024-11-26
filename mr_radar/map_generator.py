@@ -8,6 +8,7 @@ from awips.dataaccess import DataAccessLayer
 from matplotlib import pyplot
 from cartopy.feature import ShapelyFeature, NaturalEarthFeature
 
+from .rlg_defaults import RLGDefaults
 from .cache_keys import RadarCacheKeys
 from .radar_loop_generator import RadarLoopGenerator
 
@@ -26,9 +27,9 @@ STATE_BORDERS   = 'admin_1_states_provinces_lines'
 
 class MapGenerator( RadarLoopGenerator ):
 
-    def __init__( self, site_id: str, radius: int=None, path: str=None, name: str=None, **kwargs ) -> None:
-        super().__init__( site_id, radius, path )
-        self.file_name = ( name or 'map' )
+    def __init__( self, name: str=None, **kwargs ) -> None:
+        super().__init__( **kwargs )
+        self.file_name = ( name or RLGDefaults.map_file_name )
 
 
     @property
@@ -42,7 +43,7 @@ class MapGenerator( RadarLoopGenerator ):
 
 
     def generate( self ) -> None:
-        logger.info( "→ Map file will be saved as '{}'", self.file_path_name )
+        logger.info( "→ Map file will be saved as '{}'", self.image_file_path_name )
         logger.info( 'Generating map...' )
 
         super().generate()
