@@ -171,7 +171,10 @@ class FrameGenerator( RadarLoopGenerator ):
             raise RLGValueError( 'The quantity of frames to generate has not been set' )
 
         logger.info( 'Processing images...' )
-        for i, grid in enumerate( response ):
+
+        # The response list is in order from oldest to newest, so we
+        # should iterate backwards to make `frame_0.png` the latest
+        for i, grid in enumerate( response[::-1] ):
             self._process_frame( i, grid )
 
         self._generate_legend()
