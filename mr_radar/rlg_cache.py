@@ -55,6 +55,8 @@ class RLGCache:
         return False
 
     def rem( self, key: str ) -> bool:
+        if not self._pickledb.exists( key ):
+            return False
         self._dirty = True
         return self._pickledb.rem( key )
 
