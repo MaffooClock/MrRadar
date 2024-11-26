@@ -39,14 +39,14 @@ def main():
 
     output_path_default = '/data' if is_dockerized() else './out'
     parser.add_argument(
-        '-D', '--root',
+        '-R', '--root',
         type=Path,
         dest='output_path',
         help=f'The root path for all output, including JSON cache file and images.  A non-absolute path will be relative to current working directory.  Default: {output_path_default}'
     )
 
     parser.add_argument(
-        '-o', '--output',
+        '-i', '--images',
         type=Path,
         dest='image_dir',
         help=f'The destination path for the generated images.  A non-absolute path will be relative to that specified by "--root".  Default: {output_path_default}/<SITE>'
