@@ -111,14 +111,20 @@ This is the four-letter site code (known as the ICAO) of the radar site from whi
 
 Here are the flags with explanations of each:
 
-| Flag                                | Default                                                         | Description                                                                                                                                                                             |
-|-------------------------------------|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| &#8209;&#8209;radius<br />&#8209;r  | 150                                                             | The distance in miles around the radar site that you'd like to cover in the generated images                                                                                            |
-| &#8209;&#8209;root<br />&#8209;R    | Dockerized:&nbsp;`/data`<br />Direct:&nbsp;`./out`              | The root path for all output (JSON cache file and generated images)                                                                                                                     |
-| &#8209;&#8209;images<br />&#8209;i  | `./<site_id>` relative to root path                             | The directory in which the generated PNG files will be saved, which will be relative to the root path.<br /><br />Specify an absolute path to save the images outside of the root path. |
-| &#8209;&#8209;file<br />&#8209;f    | Map mode:&nbsp;`map.png`<br />Frames mode:&nbsp;`frame_<i>.png` | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                                                           |
-| &#8209;&#8209;frames<br />&#8209;n  | 12                                                              | The quantity of NEXRAD imagery frames to generate                                                                                                                                       |
-| &#8209;&#8209;product<br />&#8209;p | Reflectivity                                                    | The radar product to use for generating NEXRAD imagery frames.<br /><br />Hint: use the `dump-products` command to find the one you want.                                               |
+<!--
+    We'll need to use these to prevent the table from word-wrapping in the first two columns:
+        Non-breaking hyphen: &#8209;
+        Non-breaking space:  &#160; or &nbsp;
+-->
+
+| Flag                                | Default                                                                         | Description                                                                                                                                                                             |
+|-------------------------------------|---------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| &#8209;&#8209;radius<br />&#8209;r  | 150                                                                             | The distance in miles around the radar site that you'd like to feature in the generated images                                                                                          |
+| &#8209;&#8209;root<br />&#8209;R    | Dockerized:&nbsp;`/data`<br />Direct:&nbsp;`./out` in current working directory | The root path for all output (JSON cache file and generated images)                                                                                                                     |
+| &#8209;&#8209;images<br />&#8209;i  | `./<site_id>` relative to root path                                             | The directory in which the generated PNG files will be saved, which will be relative to the root path.<br /><br />Specify an absolute path to save the images outside of the root path. |
+| &#8209;&#8209;file<br />&#8209;f    | Map&nbsp;mode:&nbsp;`map.png`<br />Frames&nbsp;mode:&nbsp;`frame_<i>.png`       | The file name to use for the generated PNG file(s).<br />It is not necessary to include the `.png` extension.                                                                           |
+| &#8209;&#8209;frames<br />&#8209;n  | 12                                                                              | The quantity of NEXRAD imagery frames to generate                                                                                                                                       |
+| &#8209;&#8209;product<br />&#8209;p | Reflectivity                                                                    | The radar product to use for generating NEXRAD imagery frames.<br /><br />Hint: use the `dump-products` command to find the one you want.                                               |
 
 
 > [!TIP]
