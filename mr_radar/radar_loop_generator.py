@@ -139,8 +139,8 @@ class RadarLoopGenerator:
         if path is None:
             return
 
-        path = Path( path ).resolve()
         self._validate_file_path( path )
+        path = Path( path ).resolve()
         self._output_path = str( path )
 
 
@@ -164,8 +164,8 @@ class RadarLoopGenerator:
         if path is None:
             return
 
-        path = Path( path )
         self._validate_file_path( path )
+        path = Path( path )
         self.cache.set( RadarCacheKeys.IMAGE_PATH, str( path ) )
 
 
