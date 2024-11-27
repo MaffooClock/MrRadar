@@ -150,7 +150,8 @@ class RadarLoopGenerator:
 
     @property
     def json_path( self ) -> str:
-        return '%s.json' % str( Path( self.output_path, self.site_id.lower() ) )
+        json_path = Path( self.output_path, self.site_id.lower() ).with_suffix( '.json' )
+        return str( json_path )
 
 
     @property
