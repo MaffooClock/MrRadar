@@ -170,8 +170,7 @@ class RadarLoopGenerator:
             return
 
         self._validate_file_path( path )
-        path = Path( path )
-        self.cache.set( RadarCacheKeys.IMAGE_PATH, str( path ) )
+        self.cache.set( RadarCacheKeys.IMAGE_PATH, path )
 
 
     @property
