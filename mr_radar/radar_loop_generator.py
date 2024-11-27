@@ -145,7 +145,6 @@ class RadarLoopGenerator:
             return
 
         self._validate_file_path( path )
-        path = Path( path ).resolve()
         self._output_path = str( path )
 
 
