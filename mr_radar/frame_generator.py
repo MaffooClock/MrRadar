@@ -43,7 +43,8 @@ class FrameGenerator( RadarLoopGenerator ):
 
     @file_name.setter
     def file_name( self, name: str ) -> None:
-        self.cache.set( RadarCacheKeys.FILE_NAME, f"{name}_%d.png" )
+        file_name = self._sanitize_file_name( f"{name}_%d" )
+        self.cache.set( RadarCacheKeys.FILE_NAME, file_name )
 
 
     @property

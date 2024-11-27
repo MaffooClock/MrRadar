@@ -39,7 +39,8 @@ class MapGenerator( RadarLoopGenerator ):
 
     @file_name.setter
     def file_name( self, name: str ) -> None:
-        self.cache.set( RadarCacheKeys.FILE_NAME, f"{name}.png" )
+        file_name = self._sanitize_file_name( name )
+        self.cache.set( RadarCacheKeys.FILE_NAME, file_name )
 
 
     def generate( self ) -> None:

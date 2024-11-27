@@ -117,8 +117,8 @@ class RadarLoopGenerator:
 
 
     @property
-    def file_name( self ) -> str:
-        return ''
+    def file_name( self ) -> str | None:
+        return None
 
 
     @file_name.setter
@@ -273,6 +273,19 @@ class RadarLoopGenerator:
 
         if Path( path ).exists() and not Path( path ).is_dir():
             raise RLGValueError( 'The file path provided exists, but it is not a directory' )
+
+
+    @classmethod
+    def _sanitize_file_name( cls, file_name: str ) -> str:
+
+        file = Path( file_name )
+        while file.suffix == '.png':
+            file = file.stem
+
+        if file.name:
+            file = file.with_suffix( '.png' )
+
+        return file.name
 
 
     r'''
