@@ -40,8 +40,14 @@ class RadarLoopGenerator:
         self.cache = RLGCache()
 
         self.site_id     = site_id
-        self.radius      = radius
         self.output_path = output_path
+
+        # We need this after site_id and output_path, since these are used
+        # to determine where the JSON file will be located, but before any
+        # of the other setters are used since those depend on .load()
+        self.cache.load( self.json_path )
+
+        self.radius      = radius
         self.image_path  = image_dir
 
 
@@ -54,7 +60,6 @@ class RadarLoopGenerator:
     def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
         self._site_id = site_id.upper()
-        self.cache.load( str( self.json_path ) )
         logger.info( "→ Site ID is '{}'", self.site_id )
 
 
