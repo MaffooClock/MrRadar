@@ -175,7 +175,7 @@ class RadarLoopGenerator:
 
     @property
     def image_file_path_name( self ) -> str:
-        image_file_path = Path( self.image_path, self.file_name )
+        image_file_path = Path( self.image_path, self.file_name or '' )
         return str( image_file_path )
 
 
