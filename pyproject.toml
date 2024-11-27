@@ -20,7 +20,8 @@ dependencies = [
     "python-awips",
     "geopy",
     "pickledb",
-    "pytest"
+    "pytest",
+    "pytest-check"
 ]
 
 [tool.setuptools]

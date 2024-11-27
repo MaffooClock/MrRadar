@@ -8,3 +8,4 @@ python-awips
 geopy
 pickledb
 pytest
+pytest-check
