@@ -24,11 +24,7 @@ def cache_obj( cache_instance, tmp_path_factory ) -> RLGCache:
     json_file = json_path.with_name( 'mr_radar' )
     cache_instance.load( str( json_file ) )
     yield cache_instance
-    try:
-        json_file.unlink( missing_ok=True )
-        json_path.rmdir()
-    except OSError:
-        pass
+    json_file.with_suffix( '.json' ).unlink()
 
 
 
@@ -63,6 +59,8 @@ class TestCache:
         assert cache_instance.dump( force=True )
 
         assert cache_instance.exists
+
+        json_file.with_suffix( '.json' ).unlink()
 
 
     def test_exists_after_dump( self, cache_obj: RLGCache ) -> None:
