@@ -52,12 +52,13 @@ class TestCache:
     def test_dump( self, cache_instance: RLGCache, tmp_path_factory ) -> None:
         json_path = tmp_path_factory.getbasetemp()
         json_file = json_path.with_name( random_filename() )
+
+        assert not cache_instance.is_loaded
         cache_instance.load( str( json_file ) )
+        assert cache_instance.is_loaded
 
         assert not cache_instance.exists
-
         assert cache_instance.dump( force=True )
-
         assert cache_instance.exists
 
         json_file.with_suffix( '.json' ).unlink()
