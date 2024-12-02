@@ -40,8 +40,14 @@ class RadarLoopGenerator:
         self.cache = RLGCache()
 
         self.site_id     = site_id
-        self.radius      = radius
         self.output_path = output_path
+
+        # We need this after site_id and output_path, since these are used
+        # to determine where the JSON file will be located, but before any
+        # of the other setters are used since those depend on .load()
+        self.cache.load( self.json_path )
+
+        self.radius      = radius
         self.image_path  = image_dir
 
 
@@ -54,7 +60,6 @@ class RadarLoopGenerator:
     def site_id( self, site_id: str ) -> None:
         self._validate_site_id( site_id )
         self._site_id = site_id.upper()
-        self.cache.load( str( self.json_path ) )
         logger.info( "→ Site ID is '{}'", self.site_id )
 
 
@@ -117,8 +122,8 @@ class RadarLoopGenerator:
 
 
     @property
-    def file_name( self ) -> str:
-        return ''
+    def file_name( self ) -> str | None:
+        return None
 
 
     @file_name.setter
@@ -139,14 +144,14 @@ class RadarLoopGenerator:
         if path is None:
             return
 
-        path = Path( path ).resolve()
         self._validate_file_path( path )
         self._output_path = str( path )
 
 
     @property
     def json_path( self ) -> str:
-        return '%s.json' % str( Path( self.output_path, self.site_id.lower() ) )
+        json_path = Path( self.output_path, self.site_id.lower() ).with_suffix( '.json' )
+        return str( json_path )
 
 
     @property
@@ -164,14 +169,13 @@ class RadarLoopGenerator:
         if path is None:
             return
 
-        path = Path( path )
         self._validate_file_path( path )
-        self.cache.set( RadarCacheKeys.IMAGE_PATH, str( path ) )
+        self.cache.set( RadarCacheKeys.IMAGE_PATH, path )
 
 
     @property
     def image_file_path_name( self ) -> str:
-        image_file_path = Path( self.image_path, self.file_name )
+        image_file_path = Path( self.image_path, self.file_name or '' )
         return str( image_file_path )
 
 
@@ -273,6 +277,19 @@ class RadarLoopGenerator:
 
         if Path( path ).exists() and not Path( path ).is_dir():
             raise RLGValueError( 'The file path provided exists, but it is not a directory' )
+
+
+    @classmethod
+    def _sanitize_file_name( cls, file_name: str ) -> str:
+
+        file = Path( file_name )
+        while file.suffix == '.png':
+            file = file.stem
+
+        if file.name:
+            file = file.with_suffix( '.png' )
+
+        return file.name
 
 
     r'''

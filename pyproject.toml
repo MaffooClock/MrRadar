@@ -19,7 +19,9 @@ dependencies = [
     "shapely",
     "python-awips",
     "geopy",
-    "pickledb"
+    "pickledb",
+    "pytest",
+    "pytest-check"
 ]
 
 [tool.setuptools]
