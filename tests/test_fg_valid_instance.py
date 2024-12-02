@@ -39,7 +39,7 @@ def generator( temp_path: str, image_path: str, expected_json_file: Path ) -> Fr
 class TestFGValidInstance:
 
     def test_file_name( self, generator: FrameGenerator ) -> None:
-        assert generator.file_name != RLGDefaults.map_file_name
+        assert generator.file_name != RLGDefaults.frame_file_name
 
     ### TODO: expected_indexed_image_file() doesn't work yet
     # def test_generator( self, generator: FrameGenerator, expected_image_file: Path, expected_indexed_image_file: callable, check ) -> None:
