@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
+import string
+import random
 import pytest
 
 from mr_radar.rlg_cache import RLGCache
+
+
+def random_filename() -> str:
+    return ''.join( random.choices( string.ascii_letters, k=8 ) )
 
 
 @pytest.fixture( scope='class' )
@@ -49,7 +55,7 @@ class TestCache:
 
     def test_dump( self, cache_instance: RLGCache, tmp_path_factory ) -> None:
         json_path = tmp_path_factory.getbasetemp()
-        json_file = json_path.with_name( 'test_dump.json' )
+        json_file = json_path.with_name( random_filename() )
         cache_instance.load( str( json_file ) )
 
         assert not cache_instance.exists
