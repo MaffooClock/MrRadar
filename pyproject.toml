@@ -21,7 +21,8 @@ dependencies = [
     "geopy",
     "pickledb",
     "pytest",
-    "pytest-check"
+    "pytest-check",
+    "pytest-cov"
 ]
 
 [tool.setuptools]
