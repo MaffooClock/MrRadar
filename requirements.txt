@@ -9,3 +9,4 @@ geopy
 pickledb
 pytest
 pytest-check
+pytest-cov

@@ -1,3 +1,6 @@
+
+[![codecov](https://codecov.io/gh/MaffooClock/MrRadar/graph/badge.svg?token=RDRR1UMNK7)](https://codecov.io/gh/MaffooClock/MrRadar) [![Codecov](https://github.com/MaffooClock/MrRadar/actions/workflows/ci.yml/badge.svg)](https://github.com/MaffooClock/MrRadar/actions/workflows/ci.yml)
+
 # NEXRAD Radar Loop Generator
 
 <p align="center">
