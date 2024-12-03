@@ -19,7 +19,7 @@ COPY --from=build /app/dist/*.whl /app
 
 # Install the built package
 RUN cd /app && ls -l &&  \
-    python -m pip install /app/MrRadar-0.1.0-py3-none-any.whl
+    python -m pip install /app/MrRadar-0.1.1-py3-none-any.whl
 
 # Show installed packages for debugging
 RUN python -m pip list

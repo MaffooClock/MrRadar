@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "MrRadar"
-version = "0.1.0"
+version = "0.1.1"
 description = "A Python utility for generating map and NEXRAD imagery files for use in an animated loop"
 authors = [
     { name = "Matthew Clark", email="matt@mclark.me" },
