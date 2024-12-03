@@ -5,4 +5,4 @@ coverage:
         target: 95%
         threshold: 1%
 ignore:
-  - "tests"
+  - tests/*

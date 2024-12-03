@@ -1,6 +1,6 @@
 # NEXRAD Radar Loop Generator
 
-[![codecov](https://codecov.io/gh/MaffooClock/MrRadar/branch/dev/graph/badge.svg)](https://codecov.io/gh/MaffooClock/MrRadar)
+[![codecov](https://codecov.io/gh/MaffooClock/MrRadar/graph/badge.svg?token=RDRR1UMNK7)](https://codecov.io/gh/MaffooClock/MrRadar)
 
 <p align="center">
   <img src="https://github.com/user-attachments/assets/e45fa3ef-298b-4c7f-ba58-d82e0837f5b1" alt="Mr. Radar from Spaceballs" />
