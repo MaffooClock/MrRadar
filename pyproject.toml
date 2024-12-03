@@ -20,7 +20,11 @@ dependencies = [
     "shapely",
     "python-awips",
     "geopy",
-    "pickledb",
+    "pickledb"
+]
+
+[project.optional-dependencies]
+test = [
     "pytest",
     "pytest-check",
     "pytest-cov"
@@ -28,9 +32,7 @@ dependencies = [
 
 [tool.setuptools]
 py-modules = ["mr_radar"]
-packages = [
-    "mr_radar",
-]
+packages = [ "mr_radar" ]
 
 [project.urls]
 homepage = "https://github.com/MaffooClock/MrRadar"
